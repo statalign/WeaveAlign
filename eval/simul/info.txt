@@ -1,0 +1,11 @@
+t001-50:  tree1, edge scale 1, lambda 0.01, gap NB(3,0.7), G+I(1,0.1)
+
+t051-60:  tree2 (harder: larger avg distance), others unchanged
+t061-70:  tree1, edge scale 2, lambda 0.005   - double subst rate
+t071-80:  tree1, edge scale 1, lambda 0.02    - double indel rate
+t081-90:  tree1, edge scale 1, gap NB(10,0.5) - much longer gaps
+t091-100: tree1, edge scale 1, G+I(0.9,0.05)  - increased rate variability
+
+t101-110:  copy of t071-80
+t111-150:  tree1, edge scale 1, lambda 0.02   - double indel rate
+t151-200:  tree1, edge scale 1, lambda 0.03   - triple indel rate

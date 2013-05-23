@@ -1,0 +1,49 @@
+#example1.dawg
+
+# An Ape Tree
+# branch lengths are the expected number of substitutions along that branch
+Tree   = 
+*TREE*
+
+TreeScale = *SCALE*
+
+#Size of the sequence to be simulated
+Length = *LEN*
+
+#Use a full GTR model
+Model  = "GTR"
+
+#Rates of substitution: AC,AG,AT,CG,CT,GT
+Params = {1.5, 3.0, 0.9, 1.2, 2.5, 1.0}
+
+#Nucleotide frequencies: A,C,G,T
+Freqs  = {0.20, 0.30, 0.30, 0.20}
+
+#G+I
+#Gamma = 1
+#Iota = 0.1
+Gamma = 0.9
+Iota = 0.05
+
+#Indel process
+#Lambda = {0.01,0.01}
+Lambda = {0.01,0.01}
+GapModel = "NB"
+GapParams = {3,0.7}
+
+#GapParams = {8,0.6}
+
+#GapModel = "PL"
+#Lambda = "100"
+#GapParams = {10, 30}
+
+#Other
+#Width = 3
+#Translate = true
+
+#Number of datasets to return
+Reps = 1
+
+#Output information
+File = "dawg_out.fasta"
+Format = "Fasta"
