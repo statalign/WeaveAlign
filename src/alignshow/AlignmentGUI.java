@@ -196,7 +196,7 @@ public class AlignmentGUI extends JPanel{
 						OFFSET_X + (tab+1) * COLUMN_WIDTH, startY - OFFSET_Y);
 				g.setStroke(basic);
 				g.drawString("0.0", OFFSET_X + (tab+1) * COLUMN_WIDTH - 35, startY - OFFSET_Y + 3);
-				g.drawString("1.0", OFFSET_X + (tab+1) * COLUMN_WIDTH - 35, startY - OFFSET_Y - colHeight + 5);
+				g.drawString("Max", OFFSET_X + (tab+1) * COLUMN_WIDTH - 35, startY - OFFSET_Y - colHeight + 5);
 				g.setStroke(st);
 			}
 			
@@ -207,35 +207,16 @@ public class AlignmentGUI extends JPanel{
 				g.setColor(colors.get(track));
 				//int colHeight = Math.min(100, g.getClipBounds().height - (2 * OFFSET_Y + TITLE_Y + alignment.length * FONT_HEIGHT));
 				List<Double> tr = tracks.get(track);
-				int lasti = tr.get(0) == null ? -1 : 0;
-				double lastv = tr.get(0) == null ? 0 : tr.get(0);
 				for(int i = 1; i < tr.size(); i++){
-					double v;
-					if(tr.get(i) == null) {
-						if(i < tr.size()-1)
-							continue;
-						else {
-							v = lastv;
-							g.setStroke(dotted);
-						}
-					} else {
-						v = tr.get(i);
-						g.setStroke(lasti==i-1 ? st : dotted);
-					}
-					if(lasti == -1) {
-						lasti = 0;
-						lastv = v;
-						g.setStroke(dotted);
-					}
-					g.drawLine( OFFSET_X + (tab + lasti + 1) * COLUMN_WIDTH + COLUMN_WIDTH / 2,
-							(int)(startY - OFFSET_Y - Math.round(lastv * (colHeight) / max)),
+					if (tr.get(i-1) == null || Double.isNaN(tr.get(i-1))) { continue; }
+					if (tr.get(i) == null || Double.isNaN(tr.get(i))) { ++i; continue; }
+					g.drawLine( OFFSET_X + (tab + i) * COLUMN_WIDTH + COLUMN_WIDTH / 2,
+							(int)(startY - OFFSET_Y - Math.round(tr.get(i-1) * (colHeight) / max)),
 //							(int)(OFFSET_Y + TITLE_Y - Math.round(decoding[i-1] * (TITLE_Y) / max)),
 							OFFSET_X + (tab + i + 1) * COLUMN_WIDTH + COLUMN_WIDTH / 2,
-							(int)(startY - OFFSET_Y - Math.round(v * (colHeight) / max))
+							(int)(startY - OFFSET_Y - Math.round(tr.get(i) * (colHeight) / max))
 //							(int)(OFFSET_Y + TITLE_Y - Math.round(decoding[i] * (TITLE_Y) / max))
 							);
-					lasti = i;
-					lastv = v;
 				}
 			}
 

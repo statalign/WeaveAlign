@@ -42,10 +42,10 @@ public class Show extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 
-	public static final String MPDSHOW_VERSION = "v1.1.3";
+	public static final String MPDSHOW_VERSION = "v1.1.4";
 
 	private static final String USAGE =
-		"MPDSHOW "+MPDSHOW_VERSION+" (C) Adam Novak, 2010-11.\n\n"
+		"MPDSHOW "+MPDSHOW_VERSION+" (C) Adam Novak & Joe Herman, 2010-13.\n\n"
 		+
 		"Usage:\n\n" +
 		"    java -jar alignshow.jar [options] file.fsa/mpd\n\n\n"
