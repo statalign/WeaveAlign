@@ -10,11 +10,14 @@ import mpd.Column.ColumnKey;
 import mpd.utils.MuInt;
 
 class ColumnNetwork {
-	HashMap<ColumnKey, Column> contMap = new HashMap<ColumnKey, Column>();			// container map
+	HashMap<ColumnKey, Column> contMap = new HashMap<ColumnKey, Column>();			// container map	
 	HashMap<ColumnKey, ColClass> succMap = new HashMap<ColumnKey, ColClass>();		// successor map
+	HashMap<ColumnKey, Integer> pairFreqs;		// column pair freqs
 	
 	HashMap<ColumnKey, Integer> giCount;		// gap insensitive count
 
+	boolean twoState; // Whether to use pairFreqs
+	
 	int numberOfNodes = 0;
 	int[] firstDescriptor;
 	Column firstCol;
@@ -33,8 +36,24 @@ class ColumnNetwork {
 		
 		if(outGi || optGi)
 			giCount = new HashMap<Column.ColumnKey, Integer>();
+				
+		twoState = false;
 	}
 
+	int[] concat(int[] A, int[] B) {
+	   int aLen = A.length;
+	   int bLen = B.length;
+	   int[] C= new int[aLen+bLen];
+	   System.arraycopy(A, 0, C, 0, aLen);
+	   System.arraycopy(B, 0, C, aLen, bLen);
+	   return C;
+	}		
+	void activateTwoState(boolean t) {
+		twoState = t;
+		if (twoState) {
+			pairFreqs = new HashMap<ColumnKey, Integer>();
+		}		
+	}
 	/**
 	 * Adds an alignment to the column network.
 	 * 
@@ -70,6 +89,17 @@ class ColumnNetwork {
 					allGap = false;
 				}
 				nextDescriptor[i] = d;
+			}
+			if (twoState) {
+				int[] pairDescriptor = concat(descriptor,nextDescriptor); 
+				ColumnKey pair = new ColumnKey(pairDescriptor);
+				if (pairFreqs.containsKey(pair)) {
+					pairFreqs.put(pair,pairFreqs.get(pair) + 1); 
+				}
+				else {
+					pairFreqs.put(pair,1);
+				}
+				//pair.print();	
 			}
 			descriptor = nextDescriptor;
 			if(!allGap)
@@ -117,6 +147,8 @@ class ColumnNetwork {
 		int[] descriptor = new int[size];
 		Arrays.fill(descriptor, -1);
 		boolean allGap;
+		ColumnKey pair = new ColumnKey(descriptor); // Dummy for initialisation
+		Column pred = firstCol; 
 		for(j = 0; j < len; j++) {
 			int[] nextDescriptor =  new int[size];
 			allGap = true;
@@ -129,6 +161,10 @@ class ColumnNetwork {
 				}
 				nextDescriptor[i] = d;
 			}
+			if (twoState) {
+				int[] pairDescriptor = concat(descriptor,nextDescriptor); 
+				pair = new ColumnKey(pairDescriptor);
+			}
 			descriptor = nextDescriptor;
 			if(!allGap) {
 				rlen.value++;
@@ -140,11 +176,18 @@ class ColumnNetwork {
 //					if (col.pred.succFreq == 0) {
 //						System.out.println(j+" "+col.count+" "+col.pred.predFreq);
 //					}
-					score += Math.log((double)col.count/(double)col.pred.succFreq);
+					if (twoState) {
+						//pair.print();												
+						score += Math.log((double)pairFreqs.get(pair)/(double)pred.count);
+					}
+					else {
+						score += Math.log((double)col.count/(double)col.pred.succFreq);
+					}
 				}				
 				else {
 					score += getColMarginal(col, optGi);	//(double)col.count/n;
 				}
+				if (twoState) pred = col;
 			}
 		}
 

@@ -78,6 +78,13 @@ class Column {
 		static int colNext(int n) {
 			return n + (n & 1);
 		}
+		
+		public void print() {
+			for (int i : desc) {
+				System.out.print(i+" ");
+			}
+			System.out.println();
+		}
 
 	}
 }

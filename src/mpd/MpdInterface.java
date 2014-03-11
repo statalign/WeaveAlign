@@ -57,6 +57,9 @@ public class MpdInterface {
 	public void setTimeStats(boolean timeStats) {
 		this.timeStats = timeStats;
 	}
+	void activateTwoState(boolean t) {
+		mpd.network.activateTwoState(t);
+	}
 
 	private void initMpd(List<String> inFiles, String outputFile, String scoreFile, int scoreSamples) throws FileNotFoundException, IOException {
 		if(inFiles.size() == 1)

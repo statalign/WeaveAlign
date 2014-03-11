@@ -81,6 +81,9 @@ public class MpdMain {
 		"        Values are printed to input_1.ext.post. " +
 		"        Cannot be used in conjunction with -optgi.\n\n"
 		+
+		"    -twoState\n" +
+		"        Use two-state (pair) marginals for posterior computations.\n\n"
+		+
 		"  Annotation options:\n\n"
 		+
 		"    -mod modfile\n"+
@@ -118,6 +121,7 @@ public class MpdMain {
 
 	private static boolean scoreSamples = false;
 	private static boolean computePosterior = false;
+	private static boolean twoState = false;
 
 	public static double lastDataProb;
 		
@@ -134,6 +138,7 @@ public class MpdMain {
 				.addOption("n", Separator.EQUALS)
 				.addOption("r", Separator.EQUALS)
 				.addOption("post")
+				.addOption("twoState")
 				.addOption("mpdout")
 				.addOption("optgi")
 				.addOption("outgi")
@@ -210,6 +215,12 @@ public class MpdMain {
 				// based on empirical estimate from DAG
 				computePosterior = true;
 				scoreSamples = true;
+			}
+			if (set.isSet("twoState")) { 
+				// Print out log posterior for each sample
+				// based on empirical estimate from DAG
+				twoState = true;
+				System.out.println("Using two-state pair probabilities.");
 			}
 			if(set.isSet("mod")) {	// set up annotator
 				OptionData option = set.getOption("mod");
@@ -312,6 +323,7 @@ public class MpdMain {
 			if(!scoreSamples) {
 				mpdIf.doMpd(data, output, scoreOutput, 0, false); // Set up network and score only MPD
 			} else {
+				if (computePosterior) mpdIf.activateTwoState(twoState);
 				mpdIf.doMpd(data, output, scoreOutput, 1, false); // Set up network				
 				/* Then score individual samples
 				   If computePosterior is false, then return the sum of marginals, penalised by g
