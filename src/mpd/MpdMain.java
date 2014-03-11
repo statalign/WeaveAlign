@@ -333,8 +333,9 @@ public class MpdMain {
 				if (computePosterior) {
 					int pos = output.lastIndexOf('.');
 					if(pos == -1)
-						pos = postOutput.length();	
-					postOutput = postOutput.substring(0, pos).concat(".post");					
+						pos = postOutput.length();
+					if (twoState) postOutput = postOutput.substring(0, pos).concat(".post.2");
+					else postOutput = postOutput.substring(0, pos).concat(".post");					
 				}				
 				mpdIf.doMpd(data, postOutput, scoreOutput, 2, computePosterior); 
 			}
