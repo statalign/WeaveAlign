@@ -70,8 +70,9 @@ public class MpdGlobalFast {
 	}
 
 	private String[] getAlign(String[] align) {
-		for(int i = 0; i < t.length; i++)
-			t[i] = align[i].split("\t");
+		for(int i = 0; i < t.length; i++) {			
+				t[i] = align[i].split("\t");	
+		}
 		Arrays.sort(t, compStringArr);
 
 		String[] sortedAlign = new String[t.length];
@@ -80,17 +81,20 @@ public class MpdGlobalFast {
 		return sortedAlign;
 	}
 
-	public void scoreSample(int no, String[] align, FileWriter writer) {
+	public void scoreSample(int no, String[] align, FileWriter writer, boolean computePosterior) {
 		String[] sortedAlign = getAlign(align);
-		MuInt len = new MuInt(0);
-		double score = network.scoreAlignment(sortedAlign, len);
+		MuInt len = new MuInt(0);		
+		double score = network.scoreAlignment(sortedAlign, len, computePosterior);
 		
 		try {
-			writer.write(no+"\t"+score+"\t"+len+"\n");
+			writer.write(no+"\t"+String.format("%.6f", score)+"\t"+len+"\n");
 		} catch (IOException e) {
 		}
 	}
 	
+	public void computeEquivalenceClassFreqs() {
+		network.computeEquivalenceClassFreqs();				
+	}
 	private void updateAll() {
 		int sizeOfAlignments = t.length;
 		if(sequences == null) {

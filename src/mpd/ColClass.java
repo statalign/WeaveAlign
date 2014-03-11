@@ -11,4 +11,6 @@ class ColClass {
 	List<Column> predList;
 	double[] fwd, bwd;
 	int vitState;
+	int predFreq = 0;
+	int succFreq = 0;
 }

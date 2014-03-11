@@ -17,7 +17,7 @@ import statalign.model.subst.plugins.CustomSubstModel;
 
 
 public class MpdMain {
-	public static final String MPD_VERSION = "v2.1";
+	public static final String MPD_VERSION = "v2.2";
 
 	private static final double DEF_G = 0;
 	private static final String DEF_MPD_EXTENSION = ".mpd";
@@ -26,7 +26,7 @@ public class MpdMain {
 	private static final String DEF_SCORE_EXTENSION = ".scr";
 	
 	private static final String USAGE =
-		"MPD "+MPD_VERSION+" (C) Adam Novak, 2010-12.\n\n"
+		"MPD "+MPD_VERSION+" (C) Adam Novak, Joe Herman 2010-14.\n\n"
 		+
 		"Usage:\n\n" +
 		"    java -jar mpd.jar [options] input_1.log [-out output.ext] OR\n" +
@@ -76,6 +76,11 @@ public class MpdMain {
 		"        Output the gap insensitive column scores along with the default scores\n" +
 		"        in the second column of the score output (mpd file or score file)\n\n"
 		+
+		"    -post\n" +
+		"        Print the log posterior for each sampled alignment.\n" +
+		"        Values are printed to input_1.ext.post. " +
+		"        Cannot be used in conjunction with -optgi.\n\n"
+		+
 		"  Annotation options:\n\n"
 		+
 		"    -mod modfile\n"+
@@ -111,7 +116,8 @@ public class MpdMain {
 		"        Annotation probabilites are projected down to the given sequence and\n"+
 		"        listed in the file input_1.ext"+DEF_ANNOT_EXTENSION+"1\n\n";
 
-	private static final boolean scoreSamples = false;
+	private static boolean scoreSamples = false;
+	private static boolean computePosterior = false;
 
 	public static double lastDataProb;
 		
@@ -127,6 +133,7 @@ public class MpdMain {
 //				.addOption("t", Separator.BLANK)
 				.addOption("n", Separator.EQUALS)
 				.addOption("r", Separator.EQUALS)
+				.addOption("post")
 				.addOption("mpdout")
 				.addOption("optgi")
 				.addOption("outgi")
@@ -163,10 +170,10 @@ public class MpdMain {
 			if(!mpdOut) {
 				int pos = scoreOutput.lastIndexOf('.');
 				if(pos == -1)
-					pos = scoreOutput.length();
-				scoreOutput = scoreOutput.substring(0, pos).concat(DEF_SCORE_EXTENSION);
+					pos = scoreOutput.length();				
+				scoreOutput = scoreOutput.substring(0, pos).concat(DEF_SCORE_EXTENSION);				
 			}
-			
+						
 			double g = DEF_G;
 			if(set.isSet("g")) {
 				String gOpt = set.getOption("g").getResultValue(0);
@@ -198,7 +205,12 @@ public class MpdMain {
 				int value = Integer.parseInt(set.getOption("r").getResultValue(0));
 				mpdIf.setSampleRate(value);
 			}
-			
+			if (set.isSet("post")) { 
+				// Print out log posterior for each sample
+				// based on empirical estimate from DAG
+				computePosterior = true;
+				scoreSamples = true;
+			}
 			if(set.isSet("mod")) {	// set up annotator
 				OptionData option = set.getOption("mod");
 				
@@ -298,13 +310,25 @@ public class MpdMain {
 		
 //			System.out.println(input+" "+output+" "+g);
 			if(!scoreSamples) {
-				mpdIf.doMpd(data, output, scoreOutput, 0);
+				mpdIf.doMpd(data, output, scoreOutput, 0, false); // Set up network and score only MPD
 			} else {
-				mpdIf.doMpd(data, output, scoreOutput, 1);
-				mpdIf.doMpd(data, output, scoreOutput, 2);
+				mpdIf.doMpd(data, output, scoreOutput, 1, false); // Set up network				
+				/* Then score individual samples
+				   If computePosterior is false, then return the sum of marginals, penalised by g
+				   If computePosterior is true, then return the log posterior based on conditionals
+				 */
+				String postOutput = output;
+				if (computePosterior) {
+					int pos = output.lastIndexOf('.');
+					if(pos == -1)
+						pos = postOutput.length();	
+					postOutput = postOutput.substring(0, pos).concat(".post");					
+				}				
+				mpdIf.doMpd(data, postOutput, scoreOutput, 2, computePosterior); 
 			}
 			if(mpdIf.getAnnotator() != null)
 				lastDataProb = mpdIf.getAnnotator().getDataProb();
+			System.err.println("Done.");
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -318,10 +342,10 @@ public class MpdMain {
 		try {
 			MpdInterface mpdIf = new MpdInterface(0, false, false);
 			if(!scoreSamples) {
-				mpdIf.doMpd(input, output, output, 0);
+				mpdIf.doMpd(input, output, output, 0, false);
 			} else {
-				mpdIf.doMpd(input, output, output, 1);
-				mpdIf.doMpd(input, output, output, 2);
+				mpdIf.doMpd(input, output, output, 1,false);
+				mpdIf.doMpd(input, output, output, 2,false);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,5 +1,6 @@
 package mpd;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -91,8 +92,24 @@ class ColumnNetwork {
 		
 		return firstCol;
 	}
-	
+	public void computeEquivalenceClassFreqs() {
+		System.out.println("Computing freqs");
+		for(ColClass cl : succMap.values()) {
+			cl.predList = new ArrayList<Column>();
+			for(Column col : cl.succList) {
+				col.pred = cl;
+				cl.succFreq += col.count;	
+			}						
+		}
+		for(Column col : contMap.values()) {
+			if(col.succ != null)
+				col.succ.predList.add(col);
+		}				
+	}
 	double scoreAlignment(String[] align, MuInt rlen) {
+		return(scoreAlignment(align, rlen, false));
+	}
+	double scoreAlignment(String[] align, MuInt rlen, boolean computeLogPosterior) {
 		int len = align[0].length(), size = align.length, i, j, d;
 
 		rlen.value = 0;
@@ -119,7 +136,15 @@ class ColumnNetwork {
 				Column col = contMap.get(key);
 				if(col == null)
 					throw new Error("could not find column");
-				score += getColMarginal(col, optGi);	//(double)col.count/n;
+				if (computeLogPosterior) {					
+//					if (col.pred.succFreq == 0) {
+//						System.out.println(j+" "+col.count+" "+col.pred.predFreq);
+//					}
+					score += Math.log((double)col.count/(double)col.pred.succFreq);
+				}				
+				else {
+					score += getColMarginal(col, optGi);	//(double)col.count/n;
+				}
 			}
 		}
 

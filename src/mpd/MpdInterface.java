@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -69,7 +70,7 @@ public class MpdInterface {
 
 		if(scoreSamples < 2) {
 			System.out.println("Using g value "+mpd.getGValue());
-			System.out.println("Alignment size is "+lastSample.sequences.size());
+			System.out.println("Number of sequences = "+lastSample.sequences.size());
 
 			mpd.outputFile = outputFile;
 			mpd.scoreFile = scoreFile;
@@ -83,11 +84,11 @@ public class MpdInterface {
 	//	}
 	//<test
 
-	public void doMpd(String logFile, String outputFile, String scoreFile, int scoreSamples) throws FileNotFoundException, IOException {
-		doMpd(Arrays.asList(logFile), outputFile, scoreFile, scoreSamples);
+	public void doMpd(String logFile, String outputFile, String scoreFile, int scoreSamples, boolean computePosterior) throws FileNotFoundException, IOException {
+		doMpd(Arrays.asList(logFile), outputFile, scoreFile, scoreSamples,computePosterior);
 	}
 	
-	public void doMpd(List<String> inFiles, String outputFile, String scoreFile, int scoreSamples) throws FileNotFoundException, IOException {
+	public void doMpd(List<String> inFiles, String outputFile, String scoreFile, int scoreSamples, boolean computePosterior) throws FileNotFoundException, IOException {
 		long totalTime = -System.currentTimeMillis();
 		long ioTime = totalTime;
 		initMpd(inFiles, outputFile, scoreFile, scoreSamples);
@@ -98,6 +99,10 @@ public class MpdInterface {
 		}
 		
 		int no = 0;
+		
+		if (computePosterior) {
+			mpd.computeEquivalenceClassFreqs();
+		}
 
 		while(lastSample != null && (maxNoSamples == 0 || no < maxNoSamples)) {
 			//			System.out.println("Sample no. "+(no+1));
@@ -105,8 +110,9 @@ public class MpdInterface {
 			ioTime += System.currentTimeMillis();
 			if(scoreSamples < 2)
 				mpd.addAlignment(align);
-			else
-				mpd.scoreSample(no, align, writer);
+			else {
+				mpd.scoreSample(no, align, writer,computePosterior);
+			}
 			ioTime -= System.currentTimeMillis();
 			for(int i = 0; i < sampleRate; i++)
 				getNextSample();
