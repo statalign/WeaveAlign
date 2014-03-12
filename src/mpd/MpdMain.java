@@ -84,6 +84,9 @@ public class MpdMain {
 		"    -twoState\n" +
 		"        Use two-state (pair) marginals for posterior computations.\n\n"
 		+
+		"    -nPaths\n" +
+		"        Count the number of paths in the DAG, and output to STDOUT.\n\n"
+		+
 		"  Annotation options:\n\n"
 		+
 		"    -mod modfile\n"+
@@ -122,6 +125,7 @@ public class MpdMain {
 	private static boolean scoreSamples = false;
 	private static boolean computePosterior = false;
 	private static boolean twoState = false;
+	private static boolean countPaths = false;
 
 	public static double lastDataProb;
 		
@@ -139,6 +143,7 @@ public class MpdMain {
 				.addOption("r", Separator.EQUALS)
 				.addOption("post")
 				.addOption("twoState")
+				.addOption("nPaths")
 				.addOption("mpdout")
 				.addOption("optgi")
 				.addOption("outgi")
@@ -221,6 +226,9 @@ public class MpdMain {
 				// based on empirical estimate from DAG
 				twoState = true;
 				System.out.println("Using two-state pair probabilities.");
+			}
+			if (set.isSet("nPaths")) { 
+				countPaths = true;
 			}
 			if(set.isSet("mod")) {	// set up annotator
 				OptionData option = set.getOption("mod");
@@ -342,11 +350,11 @@ public class MpdMain {
 			if(mpdIf.getAnnotator() != null)
 				lastDataProb = mpdIf.getAnnotator().getDataProb();
 			//if (countPaths) {
-			    if (twoState & !computePosterior) {
+			    if (countPaths & !computePosterior) {
 			    	mpdIf.computeEquivalenceClassFreqs();			    
+			    	System.out.println("Counting number of paths...");
+			    	System.out.println("Log number of paths in DAG = "+mpdIf.logNPaths());
 			    }
-				System.out.println("Counting number of paths...");
-				System.out.println("Log number of paths in DAG = "+mpdIf.logNPaths());
 			//}
 			System.err.println("Done.");
 		} catch (IOException e) {
