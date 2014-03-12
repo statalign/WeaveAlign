@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import statalign.base.Utils;
+
 import mpd.Column.ColumnKey;
 import mpd.utils.MuInt;
 
@@ -123,7 +125,7 @@ class ColumnNetwork {
 		return firstCol;
 	}
 	public void computeEquivalenceClassFreqs() {
-		System.out.println("Computing freqs");
+		System.out.println("Computing equivalence class frequencies.");
 		for(ColClass cl : succMap.values()) {
 			cl.predList = new ArrayList<Column>();
 			for(Column col : cl.succList) {
@@ -163,7 +165,7 @@ class ColumnNetwork {
 			}
 			if (twoState) {
 				int[] pairDescriptor = concat(descriptor,nextDescriptor); 
-				pair = new ColumnKey(pairDescriptor);
+				pair = new ColumnKey(pairDescriptor);				
 			}
 			descriptor = nextDescriptor;
 			if(!allGap) {
@@ -175,10 +177,11 @@ class ColumnNetwork {
 				if (computeLogPosterior) {					
 //					if (col.pred.succFreq == 0) {
 //						System.out.println(j+" "+col.count+" "+col.pred.predFreq);
-//					}
+//					}					
 					if (twoState) {
 						//pair.print();												
-						score += Math.log((double)pairFreqs.get(pair)/(double)pred.count);
+						if (pairFreqs.containsKey(pair)) 
+							score += Math.log((double)pairFreqs.get(pair)/(double)pred.count);
 					}
 					else {
 						score += Math.log((double)col.count/(double)col.pred.succFreq);
@@ -192,6 +195,44 @@ class ColumnNetwork {
 		}
 
 		return score;
+	}
+	
+	double logNPaths() {		
+		HashMap<ColumnKey,Double> mem = new HashMap<ColumnKey,Double>(); 
+		return(logNPathsTo(lastCol,mem));
+	}
+	double logNPathsTo(Column c, HashMap<ColumnKey,Double> mem) {
+				
+		double N = 0;			
+		if (mem.containsKey(c.key)) {
+			return mem.get(c.key);
+		}
+		if (c.pred == firstCol.succ) {
+			//c.key.print();
+			N = Math.log(c.count);			
+		}
+		else if (c == lastCol) {
+			for (Column p : c.pred.predList) {
+				N = Utils.logAdd(N,logNPathsTo(p,mem));
+			}			
+		}
+		else {						
+			//System.out.println(c.pred.predList.size());			
+			for (Column p : c.pred.predList) {				
+				if (!twoState) {
+					N = Utils.logAdd(N,logNPathsTo(p,mem));
+				}
+				else {
+					int[] pairDescriptor = concat(p.key.desc,c.key.desc); 					
+					ColumnKey pair = new ColumnKey(pairDescriptor);
+					if (pairFreqs.containsKey(pair)) {						
+						N = Utils.logAdd(N,logNPathsTo(p,mem));
+					}					
+				}
+			}		
+		}
+		mem.put(c.key, N);		
+		return N;
 	}
 	
 	/**

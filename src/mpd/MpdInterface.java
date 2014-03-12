@@ -60,7 +60,12 @@ public class MpdInterface {
 	void activateTwoState(boolean t) {
 		mpd.network.activateTwoState(t);
 	}
-
+	void computeEquivalenceClassFreqs() {
+		mpd.network.computeEquivalenceClassFreqs();
+	}
+	double logNPaths() {
+		return mpd.network.logNPaths();
+	}
 	private void initMpd(List<String> inFiles, String outputFile, String scoreFile, int scoreSamples) throws FileNotFoundException, IOException {
 		if(inFiles.size() == 1)
 			sReader = new SampleReader(new FileReader(inFiles.get(0)));

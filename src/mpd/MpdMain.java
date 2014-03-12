@@ -341,6 +341,13 @@ public class MpdMain {
 			}
 			if(mpdIf.getAnnotator() != null)
 				lastDataProb = mpdIf.getAnnotator().getDataProb();
+			//if (countPaths) {
+			    if (twoState & !computePosterior) {
+			    	mpdIf.computeEquivalenceClassFreqs();			    
+			    }
+				System.out.println("Counting number of paths...");
+				System.out.println("Log number of paths in DAG = "+mpdIf.logNPaths());
+			//}
 			System.err.println("Done.");
 		} catch (IOException e) {
 			e.printStackTrace();
