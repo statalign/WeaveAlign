@@ -328,10 +328,11 @@ public class MpdMain {
 			}
 		
 //			System.out.println(input+" "+output+" "+g);
+			mpdIf.activateTwoState(twoState);
+
 			if(!scoreSamples) {
 				mpdIf.doMpd(data, output, scoreOutput, 0, false); // Set up network and score only MPD
 			} else {
-				if (computePosterior) mpdIf.activateTwoState(twoState);
 				mpdIf.doMpd(data, output, scoreOutput, 1, false); // Set up network				
 				/* Then score individual samples
 				   If computePosterior is false, then return the sum of marginals, penalised by g

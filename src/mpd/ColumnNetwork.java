@@ -180,7 +180,7 @@ class ColumnNetwork {
 //					}					
 					if (twoState) {
 						//pair.print();												
-						if (pairFreqs.containsKey(pair)) 
+						//if (pairFreqs.containsKey(pair)) // Not necessary, because these are observed alignments 
 							score += Math.log((double)pairFreqs.get(pair)/(double)pred.count);
 					}
 					else {
@@ -203,7 +203,7 @@ class ColumnNetwork {
 	}
 	double logNPathsTo(Column c, HashMap<ColumnKey,Double> mem) {
 				
-		double N = 0;			
+		double N = Double.NEGATIVE_INFINITY;			
 		if (mem.containsKey(c.key)) {
 			return mem.get(c.key);
 		}
