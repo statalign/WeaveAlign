@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import mpd.io.FileFormatReader;
-import mpd.io.RawSequences;
+import wvalign.io.FileFormatReader;
+import wvalign.io.RawSequences;
+
 
 
 /**

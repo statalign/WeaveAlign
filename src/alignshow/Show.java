@@ -27,16 +27,17 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import wvalign.io.RawSequences;
+import wvalign.model.Dayhoff;
+import wvalign.model.Kimura3;
+import wvalign.model.RecognitionError;
+import wvalign.model.SubstitutionModel;
+
 import ml.options.OptionData;
 import ml.options.OptionSet;
 import ml.options.Options;
 import ml.options.Options.Multiplicity;
 import ml.options.Options.Separator;
-import mpd.io.RawSequences;
-import mpd.model.Dayhoff;
-import mpd.model.Kimura3;
-import mpd.model.RecognitionError;
-import mpd.model.SubstitutionModel;
 
 public class Show extends JFrame {
 	
