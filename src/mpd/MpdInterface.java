@@ -6,13 +6,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import mpd.io.FastaReader;
+import mpd.io.RawSequences;
 import mpd.io.SampleReader;
-import statalign.io.RawSequences;
-import statalign.io.input.plugins.FastaReader;
 
 public class MpdInterface {
 	

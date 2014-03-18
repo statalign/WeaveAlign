@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import mpd.model.SubstitutionModel;
 import mpd.tree.Tree;
-import statalign.base.Utils;
-import statalign.model.subst.SubstitutionModel;
+import mpd.utils.Utils;
 
 public class MpdAnnotator {
 	

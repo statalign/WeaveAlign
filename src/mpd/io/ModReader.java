@@ -6,8 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import mpd.io.NewickReader.FormatException;
+import mpd.model.CustomSubstModel;
 import mpd.tree.Tree;
-import statalign.model.subst.plugins.CustomSubstModel;
 
 public class ModReader {
 	

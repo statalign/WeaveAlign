@@ -32,11 +32,11 @@ import ml.options.OptionSet;
 import ml.options.Options;
 import ml.options.Options.Multiplicity;
 import ml.options.Options.Separator;
-import statalign.io.RawSequences;
-import statalign.model.subst.RecognitionError;
-import statalign.model.subst.SubstitutionModel;
-import statalign.model.subst.plugins.Dayhoff;
-import statalign.model.subst.plugins.Kimura3;
+import mpd.io.RawSequences;
+import mpd.model.Dayhoff;
+import mpd.model.Kimura3;
+import mpd.model.RecognitionError;
+import mpd.model.SubstitutionModel;
 
 public class Show extends JFrame {
 	

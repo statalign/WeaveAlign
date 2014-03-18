@@ -16,9 +16,10 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import mpd.model.SubstitutionModel;
+
 import org.sourceforge.jlibeps.epsgraphics.EpsGraphics2D;
 
-import statalign.model.subst.SubstitutionModel;
 
 /**
  * This is the graphical interface for showing alignments.

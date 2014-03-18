@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import statalign.base.Utils;
 
 import mpd.Column.ColumnKey;
 import mpd.utils.MuInt;
+import mpd.utils.Utils;
 
 class ColumnNetwork {
 	HashMap<ColumnKey, Column> contMap = new HashMap<ColumnKey, Column>();			// container map	

@@ -8,7 +8,8 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
-import statalign.base.Utils;
+import mpd.utils.Utils;
+
 
 /**
  * File chooser with an easy-to-use interface to set/add file filters.

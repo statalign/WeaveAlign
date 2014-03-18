@@ -6,8 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import statalign.base.Utils;
-import statalign.model.subst.SubstitutionModel;
+import mpd.model.SubstitutionModel;
+import mpd.utils.Utils;
+
 
 
 /**

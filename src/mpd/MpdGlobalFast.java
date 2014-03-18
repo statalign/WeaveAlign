@@ -11,8 +11,6 @@ import mpd.utils.MuInt;
 
 public class MpdGlobalFast {
 
-	CurrentAlignment curAlig;
-	
 	ColumnNetwork network;
 	
 	String t[][];

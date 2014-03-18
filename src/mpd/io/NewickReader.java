@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import mpd.tree.Tree;
 import mpd.tree.TreeNode;
-import statalign.base.CircularArray;
+import mpd.utils.CircularArray;
 
 /**
  * Class to parse Newick format tree files or strings.

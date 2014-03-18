@@ -6,8 +6,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import statalign.base.Utils;
-import statalign.model.subst.SubstitutionModel;
+import mpd.model.SubstitutionModel;
+import mpd.utils.Utils;
+
 
 /**
  * This class represents a guide tree for the multiple sequence alignment.

@@ -12,8 +12,8 @@ import ml.options.Options;
 import ml.options.Options.Multiplicity;
 import ml.options.Options.Separator;
 import mpd.io.ModReader;
+import mpd.model.CustomSubstModel;
 import mpd.tree.Tree;
-import statalign.model.subst.plugins.CustomSubstModel;
 
 
 public class MpdMain {
