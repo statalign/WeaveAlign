@@ -17,7 +17,7 @@ import wvalign.tree.Tree;
 
 
 public class WeaveMain {
-	public static final String WVALIGN_VERSION = "v2.2";
+	public static final String WVALIGN_VERSION = "v1.0";
 
 	private static final double DEF_G = 0;
 	private static final String DEF_MPD_EXTENSION = ".mpd";
@@ -29,19 +29,21 @@ public class WeaveMain {
 		"WeaveAlign "+WVALIGN_VERSION+" (C) Adam Novak, Joe Herman 2010-14.\n\n"
 		+
 		"Usage:\n\n" +
-		"    java -jar WeaveAlign.jar [options] input_1.log [-out output.fsa] OR\n" +
-		"    java -jar WeaveAlign.jar [options] input_1.fsa,... input_n.fsa [-out output.fsa]\n\n"
+		"    java -jar WeaveAlign.jar [options] input_1.fsa [input_2.fsa ...]\n" +
+		"    java -jar WeaveAlign.jar [options] input_1.log\n\n"
 		+
 		"Description:\n\n" +
-		"    Generates a summary alignment from a collection of alignments using the minimum risk\n" +
-		"    (MinRisk) strategy. Alignments may be given in FASTA format or in StatAlign's log format.\n" +
-		"    A reliability score is calculated for each column of the summary alignment.\n"+
-		"    Default output file name is input_1.ext"+DEF_FASTA_EXTENSION+" for the alignment and\n" +
-		"    input_1.ext"+DEF_SCORE_EXTENSION+" for the column scores. When -out is used, score output\n" +
-		"    file is named output"+DEF_SCORE_EXTENSION+"\n"+
-		"\n\n"
+		"    Generates a summary alignment from a collection of alignments using the\n" +
+		"    minimum risk (MinRisk) strategy. Alignments may be given in FASTA format\n" +
+		"    or in StatAlign's log format. A reliability score is calculated for each\n"+
+		"    column of the summary alignment.\n\n"
 		+
 		"Options:\n\n" +
+		"    -out output.fsa\n" +
+		"        Sets the output file name - reliability scores will be written to\n" +
+		"        output"+DEF_SCORE_EXTENSION+". Default if not set: input_1.ext"+DEF_FASTA_EXTENSION+" for the alignment\n" +
+		"        and input_1.ext"+DEF_SCORE_EXTENSION+" for the column scores.\n\n"
+		+
 		"    -g=VAL\n" +
 		"        Sets the value of the g parameter of the MinRisk loss function.\n" +
 		"        Default: "+DEF_G+"\n\n"
@@ -78,7 +80,7 @@ public class WeaveMain {
 		+
 		"    -post\n" +
 		"        Print the log posterior for each sampled alignment.\n" +
-		"        Values are printed to input_1.ext.post. " +
+		"        Values are printed to input_1.ext.post.\n" +
 		"        Cannot be used in conjunction with -optgi.\n\n"
 		+
 		"    -twoState\n" +
