@@ -29,7 +29,7 @@ public class WeaveMain {
 		"WeaveAlign "+WVALIGN_VERSION+" (C) Adam Novak, Joe Herman 2010-14.\n\n"
 		+
 		"Usage:\n\n" +
-		"    java -jar WeaveAlign.jar [options] input_1.fsa [input_2.fsa ...]\n" +
+		"    java -jar WeaveAlign.jar [options] input_1.fsa input_2.fsa [input_3.fsa...]\n" +
 		"    java -jar WeaveAlign.jar [options] input_1.log\n\n"
 		+
 		"Description:\n\n" +
@@ -88,42 +88,42 @@ public class WeaveMain {
 		+
 		"    -nPaths\n" +
 		"        Count the number of paths in the DAG, and output to STDOUT.\n\n"
-		+
-		"  Annotation options:\n\n"
-		+
-		"    -mod modfile\n"+
-		"        Reads mod file that defines a model for annotation. You can specify\n" +
-		"        multiple mod files (one per annotation state) or alternatively just\n" +
-		"        a single one and edge length multipliers (rhos) for the rest of the\n" +
-		"        states\n\n"
-		+
-		"    -rho=RHO\n"+
-		"        Specifies an edge length multiplier for annotation model. If one mod\n"+
-		"        file is used then at least one rho must be specified.\n\n"
-		+
-		"    -hmm trprobfile\n"+
-		"        Reads annotation HMM transition probability matrix from file. Steady\n" +
-		"        state probabilities are assumed to follow the matrix in the file.\n\n"
-		+
-		"    -gr=INS,DEL\n"+
-		"        Substitution models of all states are extended with a gap character\n"+
-		"        using the specified average insertion and deletion rate. Default: Gaps\n"+
-		"        are treated as missing data and averaged over.\n\n"
-		+
-		"    -mpd=MODE\n"+
-		"        Defines the way the MPD alignment is created (the annotation for which\n"+
-		"        is then printed in the predfile). Mode 1: based on column probabilities\n"+
-		"        Mode 2 (default): column and annotation joint probabilities.\n\n"
-		+
-		"    -pred predfile\n"+
-		"        Specifies the output file for annotation probabilities. Rows in the\n"+
-		"        file correspond to column of the summary alignment, columns to\n"+
-		"        annotation states. Default: input_1.ext"+DEF_ANNOT_EXTENSION+"\n\n"
-		+
-		"    -pseq=SEQID\n"+
-		"        Annotation probabilites are projected down to the given sequence and\n"+
-		"        listed in the file input_1.ext"+DEF_ANNOT_EXTENSION+"1\n\n";
-
+//		+
+//		"  Annotation options:\n\n"
+//		+
+//		"    -mod modfile\n"+
+//		"        Reads mod file that defines a model for annotation. You can specify\n" +
+//		"        multiple mod files (one per annotation state) or alternatively just\n" +
+//		"        a single one and edge length multipliers (rhos) for the rest of the\n" +
+//		"        states\n\n"
+//		+
+//		"    -rho=RHO\n"+
+//		"        Specifies an edge length multiplier for annotation model. If one mod\n"+
+//		"        file is used then at least one rho must be specified.\n\n"
+//		+
+//		"    -hmm trprobfile\n"+
+//		"        Reads annotation HMM transition probability matrix from file. Steady\n" +
+//		"        state probabilities are assumed to follow the matrix in the file.\n\n"
+//		+
+//		"    -gr=INS,DEL\n"+
+//		"        Substitution models of all states are extended with a gap character\n"+
+//		"        using the specified average insertion and deletion rate. Default: Gaps\n"+
+//		"        are treated as missing data and averaged over.\n\n"
+//		+
+//		"    -mpd=MODE\n"+
+//		"        Defines the way the MPD alignment is created (the annotation for which\n"+
+//		"        is then printed in the predfile). Mode 1: based on column probabilities\n"+
+//		"        Mode 2 (default): column and annotation joint probabilities.\n\n"
+//		+
+//		"    -pred predfile\n"+
+//		"        Specifies the output file for annotation probabilities. Rows in the\n"+
+//		"        file correspond to column of the summary alignment, columns to\n"+
+//		"        annotation states. Default: input_1.ext"+DEF_ANNOT_EXTENSION+"\n\n"
+//		+
+//		"    -pseq=SEQID\n"+
+//		"        Annotation probabilites are projected down to the given sequence and\n"+
+//		"        listed in the file input_1.ext"+DEF_ANNOT_EXTENSION+"1\n\n"
+        ;
 	private static boolean scoreSamples = false;
 	private static boolean computePosterior = false;
 	private static boolean twoState = false;
