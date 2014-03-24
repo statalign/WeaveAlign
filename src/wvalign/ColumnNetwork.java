@@ -210,7 +210,7 @@ class ColumnNetwork {
 		}
 		if (c.pred == firstCol.succ) {
 			//c.key.print();
-			N = Math.log(c.count);			
+			N = 0;			
 		}
 		else if (c == lastCol) {
 			for (Column p : c.pred.predList) {
