@@ -20,6 +20,7 @@ public class WeaveInterface {
 	
 	private int maxNoSamples;
 	private int sampleRate = 1;
+	private int firstSample;
 
 	private SampleReader sReader;
 	private ArrayDeque<String> fastaList;
@@ -45,6 +46,10 @@ public class WeaveInterface {
 
 	public void setSampleRate(int sampleRate) {
 		this.sampleRate = sampleRate;
+	}
+	
+	public void setFirstSample(int firstSample) {
+		this.firstSample = firstSample;
 	}
 	
 	//>test
@@ -106,25 +111,31 @@ public class WeaveInterface {
 			writer = new FileWriter(outputFile);
 		}
 		
-		int no = 0;
 		
 		if (computePosterior) {
 			mpd.computeEquivalenceClassFreqs();
 		}
 
+		int no = 0;
+		int sampleIndex = 0;
+		
 		while(lastSample != null && (maxNoSamples == 0 || no < maxNoSamples)) {
 			//			System.out.println("Sample no. "+(no+1));
-			String[] align = getAlign();
-			ioTime += System.currentTimeMillis();
-			if(scoreSamples < 2)
-				mpd.addAlignment(align);
-			else {
-				mpd.scoreSample(no, align, writer,computePosterior);
+			if (sampleIndex >= firstSample) {
+				String[] align = getAlign();
+				ioTime += System.currentTimeMillis();
+				if(scoreSamples < 2)
+					mpd.addAlignment(align);
+				else {
+					mpd.scoreSample(no, align, writer,computePosterior);
+				}
+				ioTime -= System.currentTimeMillis();
+				no++;
 			}
-			ioTime -= System.currentTimeMillis();
-			for(int i = 0; i < sampleRate; i++)
+			for(int i = 0; i < sampleRate; i++) {
 				getNextSample();
-			no++;
+				sampleIndex++;
+			}	
 		}
 		ioTime += System.currentTimeMillis();
 		if(scoreSamples == 0) {

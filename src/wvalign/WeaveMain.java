@@ -66,6 +66,10 @@ public class WeaveMain {
 		"        Enables subsampling of input alignments with rate SAMPRATE, to decrease\n"+
 		"        autocorrelation effect. Default: 1\n\n"
 		+
+		"    -f=FIRSTSAMP\n"+
+		"        Begin sampling only at sample FIRSTSAMP, to allow for the beginning as burn-in.\n"+
+		"        Default: 0\n\n"
+		+
 		"    -mpdout\n"+
 		"        Instead of separate FASTA and scores files, creates a single MPD file\n" +
 		"        that contains both. Default name is input_1.ext"+DEF_MPD_EXTENSION+"\n\n"
@@ -143,6 +147,7 @@ public class WeaveMain {
 //				.addOption("t", Separator.BLANK)
 				.addOption("n", Separator.EQUALS)
 				.addOption("r", Separator.EQUALS)
+				 .addOption("f", Separator.EQUALS)	
 				.addOption("post")
 				.addOption("twoState")
 				.addOption("nPaths")
@@ -216,6 +221,10 @@ public class WeaveMain {
 			if(set.isSet("r")) {
 				int value = Integer.parseInt(set.getOption("r").getResultValue(0));
 				mpdIf.setSampleRate(value);
+			}
+			if(set.isSet("f")) {
+				int value = Integer.parseInt(set.getOption("f").getResultValue(0));
+				mpdIf.setFirstSample(value);
 			}
 			if (set.isSet("post")) { 
 				// Print out log posterior for each sample
