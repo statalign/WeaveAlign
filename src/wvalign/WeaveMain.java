@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import ml.options.OptionData;
@@ -12,8 +13,11 @@ import ml.options.Options;
 import ml.options.Options.Multiplicity;
 import ml.options.Options.Separator;
 import wvalign.io.ModReader;
+import wvalign.io.TreeReader;
 import wvalign.model.CustomSubstModel;
+import wvalign.model.Kimura3;
 import wvalign.tree.Tree;
+import wvalign.TreeSampler;
 
 
 public class WeaveMain {
@@ -53,7 +57,7 @@ public class WeaveMain {
 //		"        Creates files input.log.fwd and input.log.bwd with forward/backward\n" +
 //		"        conditional marginals for the MPD alignment's columns.\n\n"
 //		+
-//		"    -t treefile\n" +
+//		"    -t treefile\n" +				
 //		"        For each column of the MPD alignment finds the split within the tree\n" +
 //		"        where the fwd/bwd conditional marginal of the subsequences is\n" +
 //		"        maximal and outputs to input.log.split.fwd and .bwd\n\n"
@@ -92,6 +96,15 @@ public class WeaveMain {
 		+
 		"    -nPaths\n" +
 		"        Count the number of paths in the DAG, and output to STDOUT.\n\n"
+		+
+		"    -sampleTrees=N\n" +
+		"        Ramdomly sample tree topologies for N iterations, " +
+		"        recording the approximate marginal likelihood for" +
+		"        each unique topology, summed over all alignments" +
+		"        in the DAG. Default N=1000.\n\n"
+		+
+		"    -t treefile\n" +
+		"        Sets the file containing an initial tree.\n\n"
 //		+
 //		"  Annotation options:\n\n"
 //		+
@@ -132,6 +145,9 @@ public class WeaveMain {
 	private static boolean computePosterior = false;
 	private static boolean twoState = false;
 	private static boolean countPaths = false;
+	private static String treeFile = "";
+	private static boolean sampleTrees = false;
+	private static int treeIterations = 100;
 
 	public static double lastDataProb;
 		
@@ -144,13 +160,14 @@ public class WeaveMain {
 				.addOption("out", Separator.BLANK)
 				.addOption("g", Separator.EQUALS)
 //				.addOption("cm")
-//				.addOption("t", Separator.BLANK)
+				.addOption("t", Separator.BLANK)
 				.addOption("n", Separator.EQUALS)
 				.addOption("r", Separator.EQUALS)
 				 .addOption("f", Separator.EQUALS)	
 				.addOption("post")
 				.addOption("twoState")
-				.addOption("nPaths")
+				.addOption("nPaths")				
+				.addOption("sampleTrees",Separator.EQUALS, Multiplicity.ZERO_OR_MORE)	
 				.addOption("mpdout")
 				.addOption("optgi")
 				.addOption("outgi")
@@ -241,6 +258,14 @@ public class WeaveMain {
 			if (set.isSet("nPaths")) { 
 				countPaths = true;
 			}
+			TreeSampler treeSampler;
+			if (set.isSet("sampleTrees")) { 
+				sampleTrees = true;
+				treeIterations = Integer.parseInt(set.getOption("sampleTrees").getResultValue(0));				
+			}
+			if(set.isSet("t")) {
+				treeFile = set.getOption("t").getResultValue(0);				
+			}
 			if(set.isSet("mod")) {	// set up annotator
 				OptionData option = set.getOption("mod");
 				
@@ -269,6 +294,7 @@ public class WeaveMain {
 				} else if(models.size() == 1) {
 					error("at least two models (-mod) or one -rho parameter is required!");
 				}
+				
 				
 				if(!set.isSet("hmm"))
 					error("-hmm is not specified and is required for annotation");
@@ -336,6 +362,31 @@ public class WeaveMain {
 			} else if(set.isSet("rho") || set.isSet("hmm") || set.isSet("gr") || set.isSet("mpd")
 					|| set.isSet("pred") || set.isSet("pseq")) {
 				error("-rho, -hmm, -gr, -mpd, -pred and -pseq can only be used together with -mod");
+			}
+			
+			if (sampleTrees) {
+				System.err.println("Sampling trees for "+treeIterations+" iterations.");				
+				mpdIf.doMpd(data, output, scoreOutput, 1, false); // Set up network
+				mpdIf.getMpd().updateSequences();
+				
+				treeSampler = new TreeSampler(mpdIf.getMpd(),new Kimura3(),input0+".trees");
+				if (!treeFile.isEmpty()) {
+					System.err.println("Initial tree read from "+treeFile);
+					try{
+						treeSampler.setTree(new TreeReader(treeFile).readTree());
+					}
+					catch (Exception e) {
+						if (e.getClass().equals(IOException.class)) {
+							System.err.println("Cannot read tree file "+treeFile);						
+						}
+						e.printStackTrace();						
+					}					
+				}
+				else {
+					// Need to set up a random tree of some kind
+				}
+				treeSampler.sampleTrees(treeIterations);
+				return; 
 			}
 		
 //			System.out.println(input+" "+output+" "+g);

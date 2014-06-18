@@ -17,12 +17,14 @@ import wvalign.utils.Utils;
 public class Tree {
 
 	TreeNode root;
+	int nNodes;
 	
 	SubstitutionModel substModel;
 	boolean unknownCharWarn = true;
 	
 	public Tree(TreeNode root) {
 		this.root = root;
+		nNodes = 2*numberOfLeaves() - 2;		
 	}
 
 	public int numberOfLeaves() {
@@ -102,6 +104,11 @@ public class Tree {
 		root.precalcSubstMats(substModels);
 		init(substModels.length);
 	}
+	public void setSubstModel(SubstitutionModel substModel) {
+		this.substModel = substModel;
+		root.precalcSubstMats(substModel);
+		init(1);
+	}
 	
 	@SuppressWarnings("unchecked")
 	private void init(int states) {
@@ -162,4 +169,39 @@ public class Tree {
 		return v;
 	}
 
+	public void NNI() {
+
+		TreeNode n = nodes[Utils.generator.nextInt(nNodes)+1]; 
+		while (n.getParent() == root) {
+			n = nodes[Utils.generator.nextInt(nNodes)+1];
+		}
+		TreeNode p = n.getParent();
+		TreeNode g = p.getParent();
+		boolean nIsLeft = (n == p.getLeftChild());
+		boolean pIsLeft = (p == g.getLeftChild());
+		TreeNode u = pIsLeft ? g.getRightChild() : g.getLeftChild();
+		n.setParent(g);
+		if (pIsLeft) g.setRightChild(n);
+		else         g.setLeftChild(n);
+		u.setParent(p);
+		if (nIsLeft) p.setRightChild(u);
+		else         p.setLeftChild(u);
+		
+	}
+	
+	int maxIndex = 0;
+	TreeNode[] nodes;
+	
+	public void indexNodes() {
+		nodes = new TreeNode[nNodes+1];
+		indexNodes(root);
+	}
+	public void indexNodes(TreeNode tn) {
+		if (tn == null) return;
+		nodes[maxIndex++] = tn;
+		if (!tn.isLeaf()) {
+			indexNodes(tn.getLeftChild());
+			indexNodes(tn.getRightChild());
+		}
+	}
 }

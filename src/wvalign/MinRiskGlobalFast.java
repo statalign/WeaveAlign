@@ -94,27 +94,30 @@ public class MinRiskGlobalFast {
 	public void computeEquivalenceClassFreqs() {
 		network.computeEquivalenceClassFreqs();				
 	}
+	void updateSequences() {
+		int sizeOfAlignments = t.length;
+		alignBuilder = new StringBuilder[sizeOfAlignments];
+		for(int i = 0; i < sizeOfAlignments; i++)
+			alignBuilder[i] = new StringBuilder();
+		alignment = new String[sizeOfAlignments];
+
+		sequences = new String[sizeOfAlignments];			
+		StringBuilder b = new StringBuilder();
+		int len = t[0][1].length();
+		for(int i = 0; i < sizeOfAlignments; i++){
+			b.setLength(0);
+			for(int j = 0; j < len; j++){
+				if(t[i][1].charAt(j) != '-'){
+					b.append(t[i][1].charAt(j));
+				}
+			}
+			sequences[i] = b.toString();
+		}
+	}
 	private void updateAll() {
 		int sizeOfAlignments = t.length;
 		if(sequences == null) {
-
-			alignBuilder = new StringBuilder[sizeOfAlignments];
-			for(int i = 0; i < sizeOfAlignments; i++)
-				alignBuilder[i] = new StringBuilder();
-			alignment = new String[sizeOfAlignments];
-
-			sequences = new String[sizeOfAlignments];			
-			StringBuilder b = new StringBuilder();
-			int len = t[0][1].length();
-			for(int i = 0; i < sizeOfAlignments; i++){
-				b.setLength(0);
-				for(int j = 0; j < len; j++){
-					if(t[i][1].charAt(j) != '-'){
-						b.append(t[i][1].charAt(j));
-					}
-				}
-				sequences[i] = b.toString();
-			}
+			updateSequences();
 		}
 
 

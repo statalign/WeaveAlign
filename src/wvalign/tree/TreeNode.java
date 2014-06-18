@@ -36,7 +36,7 @@ public class TreeNode {
 	private List<Integer> nodesBelow;
 	
 	public TreeNode() {
-		name = "";
+		name = "";		
 	}
 
 	public TreeNode(String name) {
@@ -243,6 +243,14 @@ public class TreeNode {
 			leftChild.precalcSubstMats(substModels);
 		if(rightChild != null)
 			rightChild.precalcSubstMats(substModels);
+	}
+	public void precalcSubstMats(SubstitutionModel substModel) {
+		substMat = new double[1][][];		
+		substMat[0] = substModel.updateTransitionMatrix(null, evolDist);
+		if(leftChild != null)
+			leftChild.precalcSubstMats(substModel);
+		if(rightChild != null)
+			rightChild.precalcSubstMats(substModel);
 	}
 	
 	public double[] calcSubstLike(double[][] observation, int modelInd) {
