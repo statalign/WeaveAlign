@@ -14,9 +14,9 @@ import wvalign.io.RawSequences;
 import wvalign.io.SampleReader;
 
 
-public class WeaveInterface {
+public class DagInterface {
 	
-	private MinRiskGlobalFast mpd;
+	private AlignmentDAG dag;
 	
 	private int maxNoSamples;
 	private int sampleRate = 1;
@@ -29,15 +29,15 @@ public class WeaveInterface {
 	private boolean timeStats = true;
 	
 	/**
-	 * Logging (partial MPD results) is off by default.
+	 * Logging (partial MinRisk results) is off by default.
 	 * Call {@link #enableLogging(File)} to change this.
 	 */
-	public WeaveInterface(double gValue, boolean optGi, boolean outGi) throws FileNotFoundException, IOException {
-		mpd = new MinRiskGlobalFast(gValue, optGi, outGi);
+	public DagInterface(double gValue, boolean optGi, boolean outGi) throws FileNotFoundException, IOException {
+		dag = new AlignmentDAG(gValue, optGi, outGi);
 	}
 
-	public MinRiskGlobalFast getMpd() {
-		return mpd;
+	public AlignmentDAG getDag() {
+		return dag;
 	}
 
 	public void setMaxNoSamples(int value) {
@@ -54,8 +54,8 @@ public class WeaveInterface {
 	
 	//>test
 	//	public void setClassSizeFiles(String fwdFile, String bwdFile) throws IOException {
-	//		mpd.fwdClassFile = new FileWriter(fwdFile);
-	//		mpd.bwdClassFile = new FileWriter(bwdFile);
+	//		dag.fwdClassFile = new FileWriter(fwdFile);
+	//		dag.bwdClassFile = new FileWriter(bwdFile);
 	//	}
 	//<test
 		
@@ -63,15 +63,16 @@ public class WeaveInterface {
 		this.timeStats = timeStats;
 	}
 	void activateTwoState(boolean t) {
-		mpd.network.activateTwoState(t);
+		dag.columnNetwork.activateTwoState(t);
 	}
 	void computeEquivalenceClassFreqs() {
-		mpd.network.computeEquivalenceClassFreqs();
+		dag.columnNetwork.computeEquivalenceClassFreqs();
 	}
 	double logNPaths() {
-		return mpd.network.logNPaths();
+		return dag.columnNetwork.logNPaths();
 	}
-	private void initMpd(List<String> inFiles, String outputFile, String scoreFile, int scoreSamples) throws FileNotFoundException, IOException {
+	private void initDag(List<String> inFiles, String outputFile, String scoreFile, 
+			boolean scoreSamples) throws FileNotFoundException, IOException {
 		if(inFiles.size() == 1)
 			sReader = new SampleReader(new FileReader(inFiles.get(0)));
 		else
@@ -81,39 +82,69 @@ public class WeaveInterface {
 		if(lastSample == null || lastSample.sequences.size() == 0)
 			throw new Error("No samples found.");
 
-		if(scoreSamples < 2) {
-			System.out.println("Using g value "+mpd.getGValue());
+		if(!scoreSamples) {
+			System.out.println("Using g value "+dag.getGValue());
 			System.out.println("Number of sequences = "+lastSample.sequences.size());
 
-			mpd.outputFile = outputFile;
-			mpd.scoreFile = scoreFile;
+			dag.outputFile = outputFile;
+			dag.scoreFile = scoreFile;
 		}
 	}
 	
 	//>test
 	//	public void setClassSizeFiles(String fwdFile, String bwdFile) throws IOException {
-	//		mpd.fwdClassFile = new FileWriter(fwdFile);
-	//		mpd.bwdClassFile = new FileWriter(bwdFile);
+	//		dag.fwdClassFile = new FileWriter(fwdFile);
+	//		dag.bwdClassFile = new FileWriter(bwdFile);
 	//	}
 	//<test
 
-	public void doMpd(String logFile, String outputFile, String scoreFile, int scoreSamples, boolean computePosterior) throws FileNotFoundException, IOException {
-		doMpd(Arrays.asList(logFile), outputFile, scoreFile, scoreSamples,computePosterior);
+	public void scoreSamples(String logFile, String outputFile, String scoreFile,
+			boolean computePosterior) 
+			throws FileNotFoundException, IOException {
+		networkOperation(logFile,outputFile,scoreFile,true,false,computePosterior);
+	}
+	public void scoreSamples(List<String> logFile, String outputFile, String scoreFile,
+			boolean computePosterior) 
+			throws FileNotFoundException, IOException {
+		networkOperation(logFile,outputFile,scoreFile,true,false,computePosterior);
+	}
+	public void setupNetwork(String logFile, String outputFile, String scoreFile) 
+			throws FileNotFoundException, IOException {
+		networkOperation(logFile,outputFile,scoreFile,false,false,false);
+	}
+	public void setupNetwork(List<String> logFile, String outputFile, String scoreFile) 
+			throws FileNotFoundException, IOException {
+		networkOperation(logFile,outputFile,scoreFile,false,false,false);
+	}
+	public void computeMinRisk(String logFile, String outputFile, String scoreFile) 
+			throws FileNotFoundException, IOException {
+		networkOperation(logFile,outputFile,scoreFile,false,true,false);
+	}
+	public void computeMinRisk(List<String> logFile, String outputFile, String scoreFile) 
+			throws FileNotFoundException, IOException {
+		networkOperation(logFile,outputFile,scoreFile,false,true,false);
+	}
+	public void networkOperation(String logFile, String outputFile, String scoreFile, 
+			boolean scoreSamples, boolean computeMinRisk, boolean computePosterior) 
+					throws FileNotFoundException, IOException {
+		networkOperation(Arrays.asList(logFile), outputFile, scoreFile, scoreSamples,computeMinRisk,computePosterior);
 	}
 	
-	public void doMpd(List<String> inFiles, String outputFile, String scoreFile, int scoreSamples, boolean computePosterior) throws FileNotFoundException, IOException {
+	public void networkOperation(List<String> inFiles, String outputFile, String scoreFile, 
+			boolean scoreSamples, boolean computeMinRisk, boolean computePosterior) 
+					throws FileNotFoundException, IOException {
 		long totalTime = -System.currentTimeMillis();
 		long ioTime = totalTime;
-		initMpd(inFiles, outputFile, scoreFile, scoreSamples);
+		initDag(inFiles, outputFile, scoreFile, scoreSamples);
 
 		FileWriter writer = null;
-		if(scoreSamples == 2) {
+		if(scoreSamples) {
 			writer = new FileWriter(outputFile);
 		}
 		
 		
 		if (computePosterior) {
-			mpd.computeEquivalenceClassFreqs();
+			dag.computeEquivalenceClassFreqs();
 		}
 
 		int no = 0;
@@ -123,12 +154,11 @@ public class WeaveInterface {
 			//			System.out.println("Sample no. "+(no+1));
 			if (sampleIndex >= firstSample) {
 				String[] align = getAlign();
-				ioTime += System.currentTimeMillis();
-				if(scoreSamples < 2)
-					mpd.addAlignment(align);
-				else {
-					mpd.scoreSample(no, align, writer,computePosterior);
+				ioTime += System.currentTimeMillis();									
+				if (scoreSamples){
+					dag.scoreSample(no, align, writer,computePosterior);
 				}
+				else dag.addAlignment(align);
 				ioTime -= System.currentTimeMillis();
 				no++;
 			}
@@ -138,21 +168,21 @@ public class WeaveInterface {
 			}	
 		}
 		ioTime += System.currentTimeMillis();
-		if(scoreSamples == 0) {
-			mpd.finalise();
+		if(computeMinRisk) {
+			dag.finalise();
 
 			totalTime += System.currentTimeMillis();
 			if(timeStats) {
 				System.out.println("Time spent in:");
 				System.out.println(" * Input and output  : "+ioTime+" ms");
-				System.out.println(" * Building network  : "+mpd.getBuildTime()+" ms");
-				if(mpd.annotator == null)
-					System.out.println(" * Viterbi algorithm : "+mpd.getViterbiTime()+" ms");
+				System.out.println(" * Building network  : "+dag.getBuildTime()+" ms");
+				if(dag.annotator == null)
+					System.out.println(" * Viterbi algorithm : "+dag.getViterbiTime()+" ms");
 				else
-					System.out.println(" * Annotation total  : "+mpd.getAnnotTime()+" ms");
+					System.out.println(" * Annotation total  : "+dag.getAnnotTime()+" ms");
 				System.out.println("Total time: "+totalTime+" ms");
 			}
-		} else if(scoreSamples == 2) {
+		} else if(scoreSamples) {
 			writer.close();
 		}
 
@@ -185,8 +215,8 @@ public class WeaveInterface {
 	
 	//>test
 	//	public void setClassSizeFiles(String fwdFile, String bwdFile) throws IOException {
-	//		mpd.fwdClassFile = new FileWriter(fwdFile);
-	//		mpd.bwdClassFile = new FileWriter(bwdFile);
+	//		dag.fwdClassFile = new FileWriter(fwdFile);
+	//		dag.bwdClassFile = new FileWriter(bwdFile);
 	//	}
 	//<test
 		
@@ -201,11 +231,11 @@ public class WeaveInterface {
 	}
 
 	public void setAnnotator(MinRiskAnnotator annotator) {
-		mpd.setAnnotator(annotator);
+		dag.setAnnotator(annotator);
 	}
 	
 	public MinRiskAnnotator getAnnotator() {
-		return mpd.annotator;
+		return dag.annotator;
 	}
 	
 }

@@ -3,8 +3,10 @@ package wvalign.tree;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 import wvalign.model.SubstitutionModel;
 import wvalign.utils.Utils;
@@ -70,6 +72,7 @@ public class Tree {
 	 */
 	public void sortNames(String[] seqNames) {
 		int leaves = numberOfLeaves();
+		//System.err.println("#leaves="+leaves+" , #seqs="+seqNames.length+"");
 		if(leaves != seqNames.length)
 			throw new Error("Tree is not compatible with sequences (#leaves="+leaves+" , #seqs="+seqNames.length+")!");
 		HashMap<String, Integer> nameLookup = new HashMap<String, Integer>();
@@ -105,9 +108,11 @@ public class Tree {
 		init(substModels.length);
 	}
 	public void setSubstModel(SubstitutionModel substModel) {
+		System.err.print("Updating substitution model...");
 		this.substModel = substModel;
 		root.precalcSubstMats(substModel);
 		init(1);
+		System.err.println("done.");
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -170,13 +175,17 @@ public class Tree {
 	}
 
 	public void NNI() {
+		System.err.print("Performing NNI move...");
 
 		TreeNode n = nodes[Utils.generator.nextInt(nNodes)+1]; 
 		while (n.getParent() == root) {
 			n = nodes[Utils.generator.nextInt(nNodes)+1];
 		}
+//		System.out.println("Node "+n.getName()+" selected.");
 		TreeNode p = n.getParent();
+//		System.out.println("Parent = "+p.getName());
 		TreeNode g = p.getParent();
+//		System.out.println("Grandpa = "+g.getName());
 		boolean nIsLeft = (n == p.getLeftChild());
 		boolean pIsLeft = (p == g.getLeftChild());
 		TreeNode u = pIsLeft ? g.getRightChild() : g.getLeftChild();
@@ -184,9 +193,9 @@ public class Tree {
 		if (pIsLeft) g.setRightChild(n);
 		else         g.setLeftChild(n);
 		u.setParent(p);
-		if (nIsLeft) p.setRightChild(u);
-		else         p.setLeftChild(u);
-		
+		if (nIsLeft) p.setLeftChild(u);
+		else         p.setRightChild(u);
+		System.err.println("done.");
 	}
 	
 	int maxIndex = 0;
@@ -198,7 +207,7 @@ public class Tree {
 	}
 	public void indexNodes(TreeNode tn) {
 		if (tn == null) return;
-		nodes[maxIndex++] = tn;
+		nodes[maxIndex++] = tn;		
 		if (!tn.isLeaf()) {
 			indexNodes(tn.getLeftChild());
 			indexNodes(tn.getRightChild());

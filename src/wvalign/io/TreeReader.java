@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Stack;
 
+import wvalign.io.NewickReader.FormatException;
 import wvalign.tree.Tree;
 import wvalign.tree.TreeNode;
 
@@ -19,25 +21,56 @@ import wvalign.tree.TreeNode;
 public class TreeReader {
 
 	private BufferedReader reader;
+	private Tree tree;
+	private ArrayList<Tree> trees;
+	public Tree getTree() { return tree; }
+	public ArrayList<Tree> getTrees() { return trees; }
 	
 	private double minEdgeLen = 0.01;
 	private String newickString;
 	
-	public TreeReader(String fileName) throws FileNotFoundException {
+	public TreeReader(String fileName) throws IOException, FileNotFoundException {
 		this(new File(fileName));
 	}
 	
-	public TreeReader(File file) throws FileNotFoundException {
+	public TreeReader(File file) throws FileNotFoundException, IOException {
 		this(new BufferedReader(new FileReader(file)));
 	}
 
 	/**
 	 * Constructs default {@link TreeReader} with a minimum edge length of 0.01.
 	 */
-	public TreeReader(BufferedReader reader) {
-		this.reader = reader;
+	public TreeReader(BufferedReader _reader) throws IOException {
+		reader = _reader;
+		String line;		
+		boolean nexus = false;
+		while((line = reader.readLine()) != null) {
+			if (line.isEmpty()) continue;
+			if (line.contains("#NEXUS") || line.contains("#nexus")) {
+				nexus = true;
+				trees = new ArrayList<Tree>();
+				continue;
+			}
+			String token = line;
+			if (nexus) {
+				if (line.contains(" tree ")) {
+					String[] s = line.split("=");
+					token = s[1];
+					//token = token.substring(0, token.length()-1); // remove semicolon
+				}
+				else continue;
+			}	
+			token = token.replaceAll("\\[\\d+\\]", "");
+			//System.out.println(token);
+			NewickReader tr = new NewickReader(token, 0);
+			try {
+				tree = tr.parseTree();				
+				if (nexus) trees.add(tree);
+			} catch (FormatException e) {
+				throw new Error("TreeReader: tree parse exception: "+e);			
+			}
+		}
 	}
-	
 	/**
 	 * Constructs {@link TreeReader} with a specified minimum edge length.
 	 */
