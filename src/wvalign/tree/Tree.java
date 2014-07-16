@@ -170,7 +170,8 @@ public class Tree {
 		}
 		double[] felsen = root.calcSubstLike(felsenObserv, modelInd);
 		double v = Utils.calcEmProb(felsen, substModel.e);
-		caches[modelInd].put(obs, v);
+		//caches[modelInd].put(obs, v);
+		// Switched off caching because it was using too much memory
 		return v;
 	}
 

@@ -457,7 +457,7 @@ public class WeaveMain {
 							//System.out.println(sampledTrees.get(splits));
 						}
 					}
-					boolean useAverage = false;
+					boolean useAverage = true;
 //					double marginalLikelihood = Utils.log0;
 					double tot = Utils.log0;
 					for (Set<List<String> > split : sampledTrees.keySet()) {

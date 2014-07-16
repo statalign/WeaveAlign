@@ -29,6 +29,7 @@ public class MarginalTree {
 	public Tree getTree() { return tree; }
 	void setTree(Tree _tree) { 
 		tree = _tree;
+		//tree.indexNodes(tree.getRoot());
 		tree.sortNames(m.getSeqNames());
 	}
 	
