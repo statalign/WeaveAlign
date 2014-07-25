@@ -3,10 +3,8 @@ package wvalign.tree;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
 
 import wvalign.model.SubstitutionModel;
 import wvalign.utils.Utils;
@@ -26,7 +24,7 @@ public class Tree {
 	
 	public Tree(TreeNode root) {
 		this.root = root;
-		nNodes = 2*numberOfLeaves() - 2;		
+		nNodes = 2*numberOfLeaves() - 2;
 	}
 
 	public int numberOfLeaves() {

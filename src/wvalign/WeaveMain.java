@@ -6,10 +6,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -23,13 +21,10 @@ import wvalign.io.ModReader;
 import wvalign.io.TreeReader;
 import wvalign.model.CustomSubstModel;
 import wvalign.model.Dayhoff;
-import wvalign.model.Kimura3;
 import wvalign.model.SubstitutionModel;
-import wvalign.model.Wag;
 import wvalign.tree.Tree;
 import wvalign.tree.TreeSplits;
 import wvalign.utils.Utils;
-import wvalign.MarginalTree;
 
 
 public class WeaveMain {

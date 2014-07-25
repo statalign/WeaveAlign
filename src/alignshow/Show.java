@@ -220,6 +220,8 @@ public class Show extends JFrame {
 				while((line = oreader.readLine()) != null) {
 					orderMap.put(line.trim(), lno++);
 				}
+				oreader.close();
+				
 			}
 			
 			alignGui.alignment = convertAlign(seqs, orderMap);
@@ -253,8 +255,8 @@ public class Show extends JFrame {
 					Collections.sort(list);
 					groups.add(list);
 				}
-				
 				alignGui.grouping = groups;
+				greader.close();
 			}
 			
 			List<Double> mpdScoreTrack = reader.getScores();
