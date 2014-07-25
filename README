@@ -1,1 +1,10 @@
-TODO : use gradle as a build tool
+How to compile and run (on linux):
+ 1. Get gradle, see here: 
+    http://www.gradle.org/installation
+    (3 steps: download, unpack, add to PATH)
+ 2. Build tha jar file 
+    On the command line, while in the WeaveAlign directory, run: 
+    $ gradle build jar
+    (this will download dependencies if needed and run all the tests as well)
+ 3. Run the example
+    (TODO)
