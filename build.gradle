@@ -1,0 +1,42 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    flatDir {
+       dirs 'lib'
+    }
+}
+
+dependencies {
+  testCompile 'junit:junit:4.11'
+  compile 'org.apache.commons:commons-lang3:3.0'
+  compile 'commons-configuration:commons-configuration:1.9'
+  compile 'commons-io:commons-io:2.4'
+  compile 'gov.nist.math:jama:1.0.3'
+  compile name: 'options'
+  compile name: 'jlibeps'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+        resources {
+            srcDir 'src/resources'
+        }
+    }
+    test {
+        java {
+            srcDir 'test'
+        }
+    }
+
+}
+
+task copyToLib(type: Copy) {
+    into "$buildDir/output/lib"
+    from configurations.runtime
+}

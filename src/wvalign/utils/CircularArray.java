@@ -18,12 +18,12 @@ public class CircularArray<E> {
 	private final static int MIN_CAPACITY = 4;
 
 	/** lowest key of elements in array */
-	int startKey;
+	private int startKey;
 	/** highest key of elements in array plus 1 */
-	int endKey;
+	private int endKey;
 
 	/** data array, capacity of the <tt>CircularArray</tt> is <tt>data.length</tt> */
-	E[] data;
+	private E[] data;
 
 	/**
 	 * Constructs an empty <tt>CircularArray</tt> with an initial capacity of <i>MIN_CAPACITY</i>.
