@@ -10,13 +10,14 @@ import java.util.List;
 import wvalign.utils.MuInt;
 
 
-public class MinRiskGlobalFast {
+public class AlignmentDAG {
 
-	ColumnNetwork network;
+	ColumnNetwork columnNetwork;
 	
 	String t[][];
 	String[] sequences;
 	String[] seqNames;
+	public String[] getSeqNames() { return seqNames; }
 	StringBuilder[] alignBuilder;
 
 	int totalSamples;
@@ -39,17 +40,17 @@ public class MinRiskGlobalFast {
 		}
 	};
 	
-	public MinRiskGlobalFast(double gValue, boolean optGi, boolean outGi) {
-		network = new ColumnNetwork(gValue, optGi, outGi);
+	public AlignmentDAG(double gValue, boolean optGi, boolean outGi) {
+		columnNetwork = new ColumnNetwork(gValue, optGi, outGi);
 		this.outGi = outGi;
 	}
 		
 	public void setGValue(double gValue) {
-		network.gValue = gValue;
+		columnNetwork.gValue = gValue;
 	}
 	
 	public double getGValue() {
-		return network.gValue;
+		return columnNetwork.gValue;
 	}
 	
 	public void setAnnotator(MinRiskAnnotator annotator) {
@@ -65,7 +66,7 @@ public class MinRiskGlobalFast {
 		totalSamples++;
 		
 		String[] sortedAlign = getAlign(align);
-		network.addAlignment(sortedAlign);
+		columnNetwork.addAlignment(sortedAlign);
 	}
 
 	private String[] getAlign(String[] align) {
@@ -83,7 +84,7 @@ public class MinRiskGlobalFast {
 	public void scoreSample(int no, String[] align, FileWriter writer, boolean computePosterior) {
 		String[] sortedAlign = getAlign(align);
 		MuInt len = new MuInt(0);		
-		double score = network.scoreAlignment(sortedAlign, len, computePosterior);
+		double score = columnNetwork.scoreAlignment(sortedAlign, len, computePosterior);
 		
 		try {
 			writer.write(no+"\t"+String.format("%.6f", score)+"\t"+len+"\n");
@@ -92,42 +93,44 @@ public class MinRiskGlobalFast {
 	}
 	
 	public void computeEquivalenceClassFreqs() {
-		network.computeEquivalenceClassFreqs();				
+		columnNetwork.computeEquivalenceClassFreqs();				
+	}
+	void updateSequences() {
+		int sizeOfAlignments = t.length;
+		alignBuilder = new StringBuilder[sizeOfAlignments];
+		for(int i = 0; i < sizeOfAlignments; i++)
+			alignBuilder[i] = new StringBuilder();
+		alignment = new String[sizeOfAlignments];
+
+		sequences = new String[sizeOfAlignments];			
+		StringBuilder b = new StringBuilder();
+		int len = t[0][1].length();
+		for(int i = 0; i < sizeOfAlignments; i++){
+			b.setLength(0);
+			for(int j = 0; j < len; j++){
+				if(t[i][1].charAt(j) != '-'){
+					b.append(t[i][1].charAt(j));
+				}
+			}
+			sequences[i] = b.toString();
+		}
+		if(seqNames == null) {
+			seqNames = new String[sizeOfAlignments];
+			for(int i = 0; i < t.length; i++)
+				seqNames[i] = t[i][0];
+		}
 	}
 	private void updateAll() {
 		int sizeOfAlignments = t.length;
 		if(sequences == null) {
-
-			alignBuilder = new StringBuilder[sizeOfAlignments];
-			for(int i = 0; i < sizeOfAlignments; i++)
-				alignBuilder[i] = new StringBuilder();
-			alignment = new String[sizeOfAlignments];
-
-			sequences = new String[sizeOfAlignments];			
-			StringBuilder b = new StringBuilder();
-			int len = t[0][1].length();
-			for(int i = 0; i < sizeOfAlignments; i++){
-				b.setLength(0);
-				for(int j = 0; j < len; j++){
-					if(t[i][1].charAt(j) != '-'){
-						b.append(t[i][1].charAt(j));
-					}
-				}
-				sequences[i] = b.toString();
-			}
+			updateSequences();
 		}
 
-
 		Column firstCol;
-		if(annotator != null) {
-			if(seqNames == null) {
-				seqNames = new String[sizeOfAlignments];
-				for(int i = 0; i < t.length; i++)
-					seqNames[i] = t[i][0];
-			}
-			firstCol = annotator.annotate(network, sequences, seqNames);
+		if(annotator != null) {			
+			firstCol = annotator.annotate(columnNetwork, sequences, seqNames);
 		} else {
-			firstCol = network.updateViterbi();
+			firstCol = columnNetwork.updateViterbi();
 		}
 
 		Column col = firstCol.succ.viterbi;
@@ -137,9 +140,9 @@ public class MinRiskGlobalFast {
 		while(col.succ != null) {
 			int[] desc = col.key.desc;
 			
-			decoding.add(network.getColMarginal(col, false));
+			decoding.add(columnNetwork.getColMarginal(col, false));
 			if(outGi)
-				decodingGi.add(network.getColMarginal(col, true));
+				decodingGi.add(columnNetwork.getColMarginal(col, true));
 			for(int i = 0; i < desc.length; i++) {
 				alignBuilder[i].append((desc[i] & 1) == 0 ? '-' : sequences[i].charAt(desc[i] >> 1));
 			}
@@ -154,11 +157,11 @@ public class MinRiskGlobalFast {
 	}
 	
 	public long getBuildTime() {
-		return network.buildTime;
+		return columnNetwork.buildTime;
 	}
 	
 	public long getViterbiTime() {
-		return network.viterbiTime;
+		return columnNetwork.viterbiTime;
 	}
 	
 	public long getAnnotTime() {

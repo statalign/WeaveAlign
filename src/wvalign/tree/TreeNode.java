@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import wvalign.model.SubstitutionModel;
 import wvalign.utils.Utils;
@@ -36,7 +37,7 @@ public class TreeNode {
 	private List<Integer> nodesBelow;
 	
 	public TreeNode() {
-		name = "";
+		name = "";		
 	}
 
 	public TreeNode(String name) {
@@ -73,7 +74,7 @@ public class TreeNode {
 	public TreeNode getParent() {
 		return parent;
 	}
-
+	
 	/** @param parent the parent to set */
 	public void setParent(TreeNode parent) {
 		this.parent = parent;
@@ -197,24 +198,24 @@ public class TreeNode {
 		return nodesBelow;
 	}
 
-	public void collectSplits(List<Integer> nodesAbove, List<List<Integer>> splits) {
+	public void collectSplits(List<Integer> nodesAbove, Set<List<Integer>> splits) {
 		if(isLeaf())
 			return;
 		
-		splits.add(nodesBelow);
+		if (nodesAbove.size() > 1) splits.add(nodesBelow);		
 		
 		List<Integer> split = new ArrayList<Integer>();
 		split.addAll(nodesAbove);
 		split.addAll(rightChild.nodesBelow);
 		Collections.sort(split);
-		splits.add(split);
+		if (!leftChild.isLeaf()) splits.add(split);
 		leftChild.collectSplits(split, splits);
 		
 		split = new ArrayList<Integer>();
 		split.addAll(nodesAbove);
 		split.addAll(leftChild.nodesBelow);
 		Collections.sort(split);
-		splits.add(split);
+		if (!rightChild.isLeaf()) splits.add(split);
 		rightChild.collectSplits(split, splits);
 	}
 
@@ -244,10 +245,21 @@ public class TreeNode {
 		if(rightChild != null)
 			rightChild.precalcSubstMats(substModels);
 	}
+	public void precalcSubstMats(SubstitutionModel substModel) {
+		substMat = new double[1][][];		
+		substMat[0] = substModel.updateTransitionMatrix(null, evolDist);
+		if(leftChild != null)
+			leftChild.precalcSubstMats(substModel);
+		if(rightChild != null)
+			rightChild.precalcSubstMats(substModel);
+	}
 	
 	public double[] calcSubstLike(double[][] observation, int modelInd) {
-		if(leftChild == null || rightChild == null)
+		if(leftChild == null || rightChild == null) {
+//			System.out.println(nodeId);
+//			System.out.println(observation[0]);
 			return observation[nodeId];
+		}
 		double[] left = leftChild.calcSubstLike(observation, modelInd);
 		double[] right = rightChild.calcSubstLike(observation, modelInd);
 //		if(leftChild.leftChild == null && rightChild.leftChild == null && leftChild.name.equals("dp4")) {
@@ -261,6 +273,7 @@ public class TreeNode {
 	}
 
 	public void setNodeIds(HashMap<String, Integer> nameLookup) {
+		//System.out.println(name);
 		if(leftChild == null || rightChild == null) {
 			Integer id = nameLookup.get(name);
 			if(id == null)
