@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# At first read the README, run the "build.sh" script!
+
+thisDir=$(dirname $0) || false
+
+pushd ${thisDir}
+
+  inputFsaDir=${thisDir}/testdata/exampleInputDir
+  logFileForWvaInput=${thisDir}/testdata/exampleAlignments.log
+  resultFile=${thisDir}/testdata/exampleOutput.fsa
+  
+  # clean up (maybe prev runs)
+  rm -rf ${inputFsaDir}
+  # recreate
+  mkdir -p ${inputFsaDir}
+  
+  # unzip example input (500 randomized alignments)
+  unzip testdata/sampleAligns.zip -d ${inputFsaDir}
+  ./create-wva-input.sh ${inputFsaDir} 500 ${logFileForWvaInput}
+  
+  # start WeaveAlign
+
+  java -cp $(ls build/output/lib/*.jar | awk '{printf $0":"}'):build/libs/WeaveAlign.jar wvalign.WeaveMain -out ${resultFile} -g=0.5 ${logFileForWvaInput}
+
+popd
