@@ -62,7 +62,7 @@ public class AlignEvaluator {
 				List<InputStream> baseInputs = new ArrayList<InputStream>();
 				for (int i = 0; i < listOfFiles.length; i++) {
 					if (listOfFiles[i].isFile()) {
-						System.out.println("File " + listOfFiles[i].getName());
+						//System.out.println("File " + listOfFiles[i].getName());
 						InputStream is = new FileInputStream(listOfFiles[i]);
 						baseInputs.add(is);
 					}
@@ -77,15 +77,12 @@ public class AlignEvaluator {
 				outStream.flush();
 				outStream.close();	
 			}
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
 }

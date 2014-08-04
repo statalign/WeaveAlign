@@ -8,6 +8,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
+
 import wvalign.io.FastaAlignment;
 import wvalign.io.FastaAlignmentReader;
 
@@ -44,14 +46,40 @@ public class AlignmentsEvaluator {
 	}
 
 	public void evaluate() throws Exception {
-		// TODO : print statistics to the screen : 5, 50, 90th percentile of base 
-		// align scores + wva score
 		writeHeader();
 		writeWvaScores();
-		for (int i = 0; i< baseAlignments.size(); i++) {
+		for (int i = 0; i < baseAlignments.size(); i++) {
 			FastaAlignment testAlign = baseAlignments.get(i);
 			writeBaseAlignScore(testAlign);
+			
 		}
+		printScoreStatsToScreen();
+	}
+	
+	private void printScoreStatsToScreen() throws Exception {
+		System.out.println("WVA FSA score = " + refAlignment.getFsaScore(wvaAlignment));
+		System.out.println("WVA SCOL score = " + refAlignment.getScolScore(wvaAlignment));
+		int alignmentNum = baseAlignments.size();
+		Percentile percentileScol = new Percentile();
+		Percentile percentileFsa = new Percentile();
+		double[] scolScores = new double[alignmentNum];
+		double[] fsaScores = new double[alignmentNum];
+		for (int i = 0; i < alignmentNum; i++) {
+			FastaAlignment testAlign = baseAlignments.get(i);
+			double scolScore = refAlignment.getScolScore(testAlign);
+			double fsaScore = refAlignment.getFsaScore(testAlign);
+			scolScores[i] = scolScore;
+			fsaScores[i] = fsaScore;
+		}
+		percentileScol.setData(scolScores);
+		percentileFsa.setData(fsaScores);
+		System.out.println("FSA scores 5 percentile = " + percentileFsa.evaluate(5.0));
+		System.out.println("FSA scores 50 percentile = " + percentileFsa.evaluate(50.0));
+		System.out.println("FSA scores 95 percentile = " + percentileFsa.evaluate(95.0));
+		System.out.println("SCOL scores 5 percentile = " + percentileFsa.evaluate(5.0));
+		System.out.println("SCOL scores 50 percentile = " + percentileFsa.evaluate(50.0));
+		System.out.println("SCOL scores 95 percentile = " + percentileFsa.evaluate(90.0));
+		
 	}
 	
 	private void writeBaseAlignScore(FastaAlignment testAlign) throws Exception {
