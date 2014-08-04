@@ -22,7 +22,7 @@ public class AlignEvaluator {
 
 	public static void main(String args[]) throws IOException {
 		if (args.length != 1) {
-			System.out.println("Usage: EvalRunner settings.properties");
+			System.out.println("Usage: AlignEvaluator settings.properties");
 			return;
 		}
 		PropertyHandler propHandler = new PropertyHandler(requiredProps);

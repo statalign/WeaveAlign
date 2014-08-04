@@ -8,7 +8,7 @@ pushd ${thisDir}
 
   inputFsaDir=${thisDir}/testdata/exampleInputDir
   logFileForWvaInput=${thisDir}/testdata/exampleAlignments.log
-  resultFile=${thisDir}/testdata/exampleOutput.fsa
+  resultFile=${thisDir}/testdata/wva-result-example500.fsa
   
   # clean up (maybe prev runs)
   rm -rf ${inputFsaDir}
@@ -23,4 +23,8 @@ pushd ${thisDir}
 
   java -cp $(ls build/output/lib/*.jar | awk '{printf $0":"}'):build/libs/WeaveAlign.jar wvalign.WeaveMain -out ${resultFile} -g=0.5 ${logFileForWvaInput}
 
+  # evaluate the results
+  
+  java -cp $(ls build/output/lib/*.jar | awk '{printf $0":"}'):build/libs/WeaveAlign.jar wvalign.eval.AlignEvaluator ${thisDir}/testdata/testrun500.properties
+    
 popd

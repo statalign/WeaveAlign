@@ -44,6 +44,8 @@ public class AlignmentsEvaluator {
 	}
 
 	public void evaluate() throws Exception {
+		// TODO : print statistics to the screen : 5, 50, 90th percentile of base 
+		// align scores + wva score
 		writeHeader();
 		writeWvaScores();
 		for (int i = 0; i< baseAlignments.size(); i++) {
