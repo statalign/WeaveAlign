@@ -21,6 +21,9 @@ public class DagInterface {
 	private int maxNoSamples;
 	private int sampleRate = 1;
 	private int firstSample;
+	private int nSamples = 0;
+	
+	public int getNSamples() { return nSamples; }	
 
 	private SampleReader sReader;
 	private ArrayDeque<String> fastaList;
@@ -85,7 +88,8 @@ public class DagInterface {
 		if(!scoreSamples) {
 			System.out.println("Using g value "+dag.getGValue());
 			System.out.println("Number of sequences = "+lastSample.sequences.size());
-
+			//System.out.println("Number of samples = "+fastaList.size());
+			
 			dag.outputFile = outputFile;
 			dag.scoreFile = scoreFile;
 		}
@@ -164,6 +168,7 @@ public class DagInterface {
 			}
 			for(int i = 0; i < sampleRate; i++) {
 				getNextSample();
+				nSamples++;
 				sampleIndex++;
 			}	
 		}

@@ -21,7 +21,17 @@ class ColumnNetwork {
 
 	boolean twoState; // Whether to use pairFreqs
 	
-	int numberOfNodes = 0;
+	public int getNColumns() { return contMap.size(); }
+	public double averageEquivalenceClassSize() {
+		double tot = 0;
+		int n=0;
+		for (ColClass succ : succMap.values()) {
+			tot += succ.succFreq;
+			n++;
+		}
+		return ((double)tot)/n;
+	}
+	//int numberOfNodes = 0;
 	int[] firstDescriptor;
 	Column firstCol;
 	Column lastCol;
@@ -263,7 +273,7 @@ class ColumnNetwork {
 
 		column = new Column(key);
 		contMap.put(key, column);
-		numberOfNodes++;
+		//numberOfNodes++;
 		
 		if(type == -1)
 			firstCol = column;

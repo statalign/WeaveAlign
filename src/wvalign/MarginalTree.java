@@ -52,7 +52,7 @@ public class MarginalTree {
 		outFile = _outfile;
 		checkGap(model);
 		System.out.println("Gaps are treated as "+(gapIsChar?"characters":"missing data"));
-		time -= System.currentTimeMillis();
+		time = 0;
 	}
 
 	private void checkGap(SubstitutionModel model) {
@@ -61,6 +61,7 @@ public class MarginalTree {
 
 	public double computeLogLikelihood() {
 
+		time -= System.currentTimeMillis();
 		// annotate
 		calcEmissions();
 		double fwd = forward(m.columnNetwork.lastCol);
@@ -128,7 +129,7 @@ public class MarginalTree {
 	 * column equivalence classes.
 	 */
 	private void calcEmissions() {
-		System.err.print("Calculating emissions...");
+		//System.err.print("Calculating emissions...");
 		for(ColClass cl : m.columnNetwork.succMap.values()) {
 			int n = m.columnNetwork.n;
 			double classProb = 0;
@@ -153,7 +154,7 @@ public class MarginalTree {
 		}
 		m.columnNetwork.firstCol.scores = new double[1];
 		Arrays.fill(m.columnNetwork.firstCol.scores, 0);
-		System.err.println("done.");
+		//System.err.println("done.");
 	}
 	
 	private void resetForward(ColClass cl) {
@@ -165,9 +166,9 @@ public class MarginalTree {
 		resetForward(m.columnNetwork.lastCol.pred);
 	}
 	private double forward(Column lastCol) {
-		System.err.print("Computing marginal likelihood...");
+		//System.err.print("Computing marginal likelihood...");
 		double fwd = forward(lastCol.pred);
-		System.err.println("done.");
+		//System.err.println("done.");
 		return fwd;		
 	}
 

@@ -108,11 +108,11 @@ public class Tree {
 		init(substModels.length);
 	}
 	public void setSubstModel(SubstitutionModel substModel) {
-		System.err.print("Updating substitution model...");
+		//System.err.print("Updating substitution model...");
 		this.substModel = substModel;
 		root.precalcSubstMats(substModel);
 		init(1);
-		System.err.println("done.");
+		//System.err.println("done.");
 	}
 	
 	@SuppressWarnings("unchecked")

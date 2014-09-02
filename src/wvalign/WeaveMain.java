@@ -457,6 +457,7 @@ public class WeaveMain {
 							//System.out.println(sampledTrees.get(splits));
 						}
 					}
+					System.out.println("Total time taken in log likelihood computations = "+((double)treeSampler.time)/1000+"s");
 					boolean useAverage = true;
 //					double marginalLikelihood = Utils.log0;
 					double tot = Utils.log0;
@@ -483,12 +484,12 @@ public class WeaveMain {
 						if (useAverage) {
 							double treeLikelihood = 0;
 							for (double ll : sampledTrees.get(split)) treeLikelihood += ll/sampledTrees.get(split).size();
-							writer.write(split+"\t"+Math.exp(treeLikelihood-tot)+"\n");
+							writer.write(split+"\t"+Math.exp(treeLikelihood-tot)+"\t"+treeLikelihood+"\n");
 						}
 						else {
 							double maxLikelihood = Double.NEGATIVE_INFINITY;
 							for (double ll : sampledTrees.get(split)) maxLikelihood = (ll > maxLikelihood) ? ll : maxLikelihood;
-							writer.write(split+"\t"+Math.exp(maxLikelihood-tot)+"\n");
+							writer.write(split+"\t"+Math.exp(maxLikelihood-tot)+"\t"+maxLikelihood+"\n");
 						}
 						// Using maxLikelihood is very unstable with respect to the 
 						// set of trees used as input, but gives more sensible
@@ -496,6 +497,10 @@ public class WeaveMain {
 					}
 					writer.close();
 				}
+				System.out.println("Number of samples = "+dagIf.getNSamples());
+				System.out.println("Number of columns = "+dagIf.getDag().columnNetwork.getNColumns());
+				System.out.println("Average equivalence class size = "+dagIf.getDag().columnNetwork.averageEquivalenceClassSize());			
+				System.err.println("Done.");
 				return;
 			}		
 //			System.out.println(input+" "+output+" "+g);
@@ -524,6 +529,8 @@ public class WeaveMain {
 		    	System.out.println("Log number of paths in DAG = "+dagIf.logNPaths());
 		    }
 			//}
+			System.out.println("Number of samples = "+dagIf.getNSamples());
+			System.out.println("Number of columns = "+dagIf.getDag().columnNetwork.getNColumns());
 			System.err.println("Done.");
 		} catch (IOException e) {
 			e.printStackTrace();
