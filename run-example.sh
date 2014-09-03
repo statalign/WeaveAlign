@@ -21,10 +21,10 @@ pushd ${thisDir}
   
   # start WeaveAlign
 
-  java -cp $(ls build/output/lib/*.jar | awk '{printf $0":"}'):build/libs/WeaveAlign.jar wvalign.WeaveMain -out ${resultFile} -g=0.5 ${logFileForWvaInput}
+  java -cp $(ls lib/*.jar | awk '{printf $0":"}'):build/libs/WeaveAlign.jar wvalign.WeaveMain -out ${resultFile} -g=0.5 ${logFileForWvaInput}
 
   # evaluate the results
   
-  java -cp $(ls build/output/lib/*.jar | awk '{printf $0":"}'):build/libs/WeaveAlign.jar wvalign.eval.AlignEvaluator ${thisDir}/testdata/testrun500.properties
+  java -cp $(ls lib/*.jar | awk '{printf $0":"}'):build/libs/WeaveAlign.jar wvalign.eval.AlignEvaluator ${thisDir}/testdata/testrun500.properties
     
 popd
