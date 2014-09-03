@@ -5,8 +5,7 @@ How to compile and run (on linux):
  2. Build the jar file:
     On the command line, while in the WeaveAlign directory, run:
     $ ./build.sh
-    Or alternatively you can call gradle directly (it is necassary to run the "copyToLib" task before running):
-    $ gradle jar copytolib
-    (this will download dependencies if needed and run all the tests as well)
+    Or alternatively you can call gradle directly:
+    $ gradle jar
  3. Run the example:
     $ ./run-example.sh
