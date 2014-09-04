@@ -1,5 +1,7 @@
 apply plugin: 'java'
-apply plugin: 'eclipse'
+apply plugin: 'distribution'
+
+version = '1.2'
 
 repositories {
     flatDir {
@@ -31,6 +33,18 @@ sourceSets {
     test {
         java {
             srcDir 'test'
+        }
+    }
+}
+
+distributions {
+    main {
+        baseName = 'WeaveAlign'
+        contents {
+            from projectDir
+            exclude 'build', 'bin'
+            exclude 'testdata/exampleAlignments.log', 'testdata/exampleInputDir'
+            exclude 'testdata/wva-result-example500.*', 'testrun-alignScores.csv'
         }
     }
 }
