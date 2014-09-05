@@ -12,7 +12,7 @@ pushd ${thisDir}
   
   # clean up (maybe prev runs)
   rm -rf ${inputFsaDir}
-  # recreate
+  # recreate directory of input alignments
   mkdir -p ${inputFsaDir}
   
   # unzip example input (500 randomized alignments)
@@ -21,10 +21,10 @@ pushd ${thisDir}
   
   # start WeaveAlign
 
-  java -cp $(ls lib/*.jar | awk '{printf $0":"}'):build/libs/WeaveAlign.jar wvalign.WeaveMain -out ${resultFile} -g=0.5 ${logFileForWvaInput}
+  java -cp $(ls lib/*.jar | awk '{printf $0":"}'):build/libs/WeaveAlign-1.2.jar wvalign.WeaveMain -out ${resultFile} -g=0.5 ${logFileForWvaInput}
 
   # evaluate the results
   
-  java -cp $(ls lib/*.jar | awk '{printf $0":"}'):build/libs/WeaveAlign.jar wvalign.eval.AlignEvaluator ${thisDir}/testdata/testrun500.properties
+  java -cp $(ls lib/*.jar | awk '{printf $0":"}'):build/libs/WeaveAlign-1.2.jar wvalign.eval.AlignEvaluator ${thisDir}/testdata/testrun500.properties
     
 popd
