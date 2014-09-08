@@ -20,9 +20,7 @@ public class AlignmentsEvaluator {
 	private FastaAlignment wvaAlignment;
 	private FastaAlignment refAlignment;
 	private OutputStream output;
-	private final String sep = ",";
-	private Percentile percentileFsa;
-	private double[] fsaScores;
+	private final String sep = ",";	
 
 	private FastaAlignmentReader alignReader = new FastaAlignmentReader();
 
@@ -53,59 +51,61 @@ public class AlignmentsEvaluator {
 		writeWvaScores();
 		for (int i = 0; i < baseAlignments.size(); i++) {
 			FastaAlignment testAlign = baseAlignments.get(i);
-			writeBaseAlignScore(testAlign);
-			
+			writeBaseAlignScore(testAlign);			
 		}
 		printScoreStatsToScreen();
-		printSummaryToScreen();
 	}
 
-	private void computeFsaScoreStats() throws Exception {
-		int alignmentNum = baseAlignments.size();
-		percentileFsa = new Percentile();
-		fsaScores = new double[alignmentNum];
+	private Percentile computeScoreStats(String type) throws Exception {
+		int alignmentNum = baseAlignments.size();		
+		Percentile percentile = new Percentile();
+		double[] scores = new double[alignmentNum];
 		for (int i = 0; i < alignmentNum; i++) {
-			FastaAlignment testAlign = baseAlignments.get(i);
-			double fsaScore = refAlignment.getFsaScore(testAlign);
-			fsaScores[i] = fsaScore;
+			FastaAlignment testAlign = baseAlignments.get(i);			
+			if (type.equals("fsa")) {
+				scores[i] = refAlignment.getFsaScore(testAlign);
+			}
+			else if (type.equals("scol")) {
+				
+			}
+			else throw new RuntimeException("Score type `"+type+"' not recognised.");
 		}
-		percentileFsa.setData(fsaScores);
+		percentile.setData(scores);
+		return percentile;
 	}
 
-	private int computeWvaFsaRank() {
-		Arrays.sort(fsaScores);
-		double targetScore = refAlignment.getFsaScore(wvaAlignment);
-		int i = 0;
-		while (i < fsaScores.length && targetScore > fsaScores[i]) {
-			i++;
-		}
-		// how many of the samples were better? 0 is the best
-		int wvaFsaRank = i;
-		return wvaFsaRank;
+	private double computeWvaRank(double wvaScore, double[] scores) {
+		Arrays.sort(scores);		
+		int rank = 0;
+		while (rank < scores.length && wvaScore > scores[rank]) rank++;
+		return (100.0 * rank) / scores.length;
 	}
 
 	private void printScoreStatsToScreen() throws Exception {
-		computeFsaScoreStats();
-		System.out.println("WVA FSA score = " + refAlignment.getFsaScore(wvaAlignment));
-		System.out.println("WVA SCOL score = " + refAlignment.getScolScore(wvaAlignment));
-		System.out.println("FSA scores 5 percentile = " + percentileFsa.evaluate(5.0));
-		System.out.println("FSA scores 50 percentile = " + percentileFsa.evaluate(50.0));
-		System.out.println("FSA scores 95 percentile = " + percentileFsa.evaluate(95.0));
-		System.out.println("SCOL scores 5 percentile = " + percentileFsa.evaluate(5.0));
-		System.out.println("SCOL scores 50 percentile = " + percentileFsa.evaluate(50.0));
-		System.out.println("SCOL scores 95 percentile = " + percentileFsa.evaluate(90.0));
+		double wvaFsaScore = refAlignment.getFsaScore(wvaAlignment);
+//		double wvaScolScore = refAlignment.getScolScore(wvaAlignment);
 		
+		System.out.printf("WeaveAlign sum-of-pairs (AMA) score = %5.3f\n", wvaFsaScore);
+		//System.out.printf("WeaveAlign column score = %5.3f\n", wvaScolScore);
+		
+		Percentile percentileFsa = computeScoreStats("fsa");		
+		System.out.println("AMA scores for inputted alignment samples:");
+		System.out.printf("%-10s%12s%12s%12s\n","Percentile","5%","50%","95%");
+		System.out.printf("%-10s%12.3f%12.3f%12.3f\n","Score",percentileFsa.evaluate(5.0),percentileFsa.evaluate(50.0),percentileFsa.evaluate(95.0));
+//		Percentile percentileScol = computeScoreStats("scol");
+//		System.out.println("Column scores for inputted alignment samples:");
+//		System.out.printf("%12s%12s%12s\n","5%","50%","95%");
+//		System.out.printf("%12.3f%12.3f%12.3f\n",percentileScol.evaluate(5.0),percentileScol.evaluate(50.0),percentileScol.evaluate(95.0));
+		
+		printSummaryToScreen(wvaFsaScore,percentileFsa.getData(),"sum-of-pairs");
 	}
 
-	private void printSummaryToScreen() {
-		int rank = computeWvaFsaRank();
-		int inputAlignNum = fsaScores.length;
-		double wvaPercentile = 100.0 * (1.0 - (0.1* rank / inputAlignNum));
-		System.out.println("\n------------------------");
-		System.out.println("WeaveAlign's alignment scores better than " +
-				+ wvaPercentile
-				+ " percent of the input alignments (FSA score).");
-		System.out.println("------------------------");
+	private void printSummaryToScreen(double wvaScore, double[] scores,String scoreName) {
+		double rankScore = computeWvaRank(wvaScore,scores);		
+		//double wvaPercentile = 100.0 * (1.0 - (0.1* rank / inputAlignNum));
+		System.out.print("\nRank score = "+rankScore);
+		System.out.println(" (WeaveAlign's alignment scores better than " + rankScore 
+				+ "% of the input alignments, using the "+ scoreName + " score)");
 	}
 
 	private void writeBaseAlignScore(FastaAlignment testAlign) throws Exception {

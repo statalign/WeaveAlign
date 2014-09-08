@@ -2,7 +2,7 @@
 
 thisDir=$(dirname $0) || false
 
-pushd ${thisDir}
+pushd ${thisDir} > /dev/null
   gradle clean build jar
-popd
+popd > /dev/null
 
