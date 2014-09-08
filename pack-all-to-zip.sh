@@ -2,7 +2,7 @@
 
 thisDir=$(dirname $0) || false
 
-pushd ${thisDir}
+pushd ${thisDir} > /dev/null
   gradle distZip
-popd
+popd > /dev/null
 
