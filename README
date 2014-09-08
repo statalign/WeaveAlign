@@ -1,7 +1,10 @@
 How to compile and run (on linux):
- 1. Get gradle, see here: 
+ 0. Prerequisites: You'll need java JDK.
+ 1. Install gradle (if you don't have at least version 1.5), run:
+    ./install_gradle.sh
+    Or install a version by hand, see here:
     http://www.gradle.org/installation
-    (3 steps: download, unpack, add to PATH)
+    (3 easy steps: download, unpack, add to PATH)
  2. Build the jar file:
     On the command line, while in the WeaveAlign directory, run:
     $ ./build.sh
@@ -9,3 +12,7 @@ How to compile and run (on linux):
     $ gradle jar
  3. Run the example:
     $ ./run-example.sh
+
+    
+For more info, have a look at the user manual on the project webpage: 
+http://statalign.github.io/WeaveAlign/doc/user_manual.html
