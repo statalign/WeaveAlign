@@ -1,1 +1,0 @@
-java -Xmx512m -jar statalign.jar -mcmc=50k,500k,1k -ot=Fasta -log=L,A $1
