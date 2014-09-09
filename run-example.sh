@@ -20,6 +20,7 @@ pushd ${thisDir} > /dev/null
   unzip testdata/sampleAligns.zip -d ${inputFsaDir} > /dev/null
   echo "...done"
   echo "Concatenating alignments into log file..."
+  # (WeaveAlign will run much faster this way than requiring it to read in many small fsa files)
   ./create-wva-input.sh ${inputFsaDir} 500 ${logFileForWvaInput}
   echo "...done"
   
