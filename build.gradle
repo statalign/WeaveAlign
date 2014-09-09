@@ -55,7 +55,7 @@ distributions {
         baseName = 'WeaveAlign'
         contents {
             from projectDir
-            exclude 'build', 'bin', 'runnable-jars'
+            exclude 'build', 'bin'
             exclude 'testdata/exampleAlignments.log', 'testdata/exampleInputDir'
             exclude 'testdata/wva-result-example500.*', 'testrun-alignScores.csv'
         }
