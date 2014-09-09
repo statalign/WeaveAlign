@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# At first read the README, run the "build.sh" script!
+# At first read the README, run the "build-all.sh" script!
 
 thisDir=$(dirname $0) || false
 
@@ -26,12 +26,12 @@ pushd ${thisDir} > /dev/null
   
   # start WeaveAlign
   echo "Running WeaveAlign..."
-  java -cp $(ls lib/*.jar | awk '{printf $0":"}'):build/libs/WeaveAlign-1.2.jar wvalign.WeaveMain -out ${resultFile} -g=0.5 ${logFileForWvaInput}
+  java -jar runnable-jars/WeaveAlign-1.2-all.jar -out ${resultFile} -g=0.5 ${logFileForWvaInput}
 
   # evaluate the results
   echo ""
   echo "Summary of results:"
   echo "-------------------"
-  java -cp $(ls lib/*.jar | awk '{printf $0":"}'):build/libs/WeaveAlign-1.2.jar wvalign.eval.AlignEvaluator ${thisDir}/testdata/testrun500.properties
+  java -jar runnable-jars/WeaveAlignEval-1.2-all.jar ${thisDir}/testdata/testrun500.properties
     
 popd > /dev/null

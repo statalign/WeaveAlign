@@ -3,6 +3,7 @@ apply plugin: 'distribution'
 
 version = '1.2'
 
+
 repositories {
     flatDir {
        dirs 'lib'
@@ -48,11 +49,11 @@ sourceSets {
     }
 }
 
-jar.archiveName = "WeaveAlign-1.2.jar"
+jar.archiveName = "WeaveAlignEval-1.2.jar"
 
 distributions {
     main {
-        baseName = 'WeaveAlign'
+        baseName = 'WeaveAlignEval'
         contents {
             from projectDir
             exclude 'build', 'bin', 'runnable-jars'
@@ -64,10 +65,10 @@ distributions {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'wvalign.WeaveMain'
+        attributes 'Main-Class': 'wvalign.eval.AlignEvaluator'
     }
 }
 
 shadowJar {
-  baseName = 'WeaveAlign'
+  baseName = 'WeaveAlignEval'
 }
