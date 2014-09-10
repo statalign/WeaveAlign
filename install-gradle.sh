@@ -1,8 +1,11 @@
 #!/bin/bash -eu
+
+# Don't forget to source your ~/.bashrc file afterwards!
+
 set -o pipefail
 this_dir="$(dirname "$0")"
 
-gradle_version="1.8"
+gradle_version="2.0"
 gradle_download_url="https://services.gradle.org/distributions/gradle-${gradle_version}-all.zip"
 gradle_install_dir="$HOME/gradle-${gradle_version}-install"
 gradle_home="${gradle_install_dir}/gradle-${gradle_version}/"
@@ -61,3 +64,4 @@ if ! grep -Fxqe "$bashrc_line" "$HOME/.bashrc"; then
   mv "$HOME/.bashrc_tmp" "$HOME/.bashrc" 
 fi
 
+# 
