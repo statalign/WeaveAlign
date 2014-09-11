@@ -55,13 +55,11 @@ BASHRC_LINES
 
 eval "$d_bashrc_lines"
 gradle -version
-echo "$d_bashrc_lines" >> "$HOME/.devops_bashrc"
+echo "$d_bashrc_lines" >> "$HOME/.bashrc_gradle"
 
-bashrc_line='. "$HOME/.devops_bashrc" # automatic generated line'
+bashrc_line='. "$HOME/.bashrc_gradle" # automatic generated line w3'
 if ! grep -Fxqe "$bashrc_line" "$HOME/.bashrc"; then
-  echo "$bashrc_line" > "$HOME/.bashrc_tmp"
-  cat "$HOME/.bashrc" >> "$HOME/.bashrc_tmp"
+  cat "$HOME/.bashrc" > "$HOME/.bashrc_tmp"
+  echo "$bashrc_line" >> "$HOME/.bashrc_tmp"
   mv "$HOME/.bashrc_tmp" "$HOME/.bashrc" 
 fi
-
-# 
