@@ -8,5 +8,6 @@ pushd ${thisDir} > /dev/null
   cp build/libs/*-all.jar runnable-jars/
   ./build-eval.sh
   cp build/libs/*-all.jar runnable-jars/
+  cp runnable-jars/WeaveAlign-*-all.jar WeaveAlign.jar
 popd > /dev/null
 
