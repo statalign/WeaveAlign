@@ -28,7 +28,7 @@ public class AlignEvaluatorNew {
 	public static void main(String args[]) throws IOException {	
 		
 		if (args.length < 2) {
-			System.out.println("Usage: AlignEvaluator refAli.fasta testAli.fasta [output.file]");
+			System.out.println("Usage: AlignEvaluatorNew refAli.fasta testAli.fasta [output.file]");
 			return;
 		}
 		
