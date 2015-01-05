@@ -127,10 +127,11 @@ public class FastaAlignment  implements Comparable<FastaAlignment>{
 	public double getFsaScore(FastaAlignment testAlignment) {
 		this.sortByName();
 		testAlignment.sortByName();
+		long t = -System.currentTimeMillis();
 		int hom = getHomologNum();
 		int nonHom = getNonHomologNum();
-		//int totalPairNum = getTotalPairsNum();
-		Pair<Integer, Integer> matchNums = getMatchedNums(testAlignment); 
+		//int totalPairNum = getTotalPairsNum();		
+		Pair<Integer, Integer> matchNums = getMatchedNums(testAlignment);
 		int goodHom = matchNums.getLeft();
 		int goodNonHom = matchNums.getRight();
 		return (2.0 * goodHom + goodNonHom) / (2 * hom  + nonHom);
