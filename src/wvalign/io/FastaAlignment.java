@@ -48,6 +48,7 @@ public class FastaAlignment  implements Comparable<FastaAlignment>{
 
 	// TODO: check alignment length 
 	public void addSeq(String header, String seq) {
+		//System.out.println(header+" "+seq);
 		GappedSequence gs = new GappedSequence();
 		gs.id = header;
 		gs.idxs = createIndexes(seq);
@@ -82,13 +83,17 @@ public class FastaAlignment  implements Comparable<FastaAlignment>{
 		testAlignment.sortByName();
 		int goodCols = 0;
 		int allCols = getWidth();
+//		System.out.print("refWidth = "+allCols+", ");
+//		System.out.println(getColumn(0).length);
+//		System.out.print("testWidth = "+testAlignment.getWidth()+" ");
+//		System.out.println(testAlignment.getColumn(0).length);
 		for (int i = 0; i < allCols; ++i) {
-			int[] refCol = getColumn(i);
+			int[] refCol = getColumn(i);			
 			int[] otherCol = testAlignment.getCandidateCol(refCol);
 			
 			if (Arrays.equals(refCol, otherCol)) {
 				goodCols ++;
-			}
+			}			
 		}
 		return 1.0 * goodCols / allCols;
 	}
@@ -101,13 +106,18 @@ public class FastaAlignment  implements Comparable<FastaAlignment>{
 			if (refCol[i] != GAP) {
 				firstNonGapPos = i;
 			}
+			//System.out.print(refCol[i]+" ");			
 		}
+		//System.out.println();
 		if (firstNonGapPos == -1) {
 			throw new Exception("ERROR, all-gap column in alignment!");
-		}
-		
+		}						
 		for (int i = 0; i < this.getWidth() ; ++i) {
-			int[] candidateCol = getColumn(i);
+			int[] candidateCol = getColumn(i);			
+//			for (int k=0; k<candidateCol.length; k++) {
+//				System.out.print(candidateCol[k]+" ");
+//			}
+//			System.out.println();
 			if (candidateCol[firstNonGapPos] == refCol[firstNonGapPos]) {
 				return candidateCol;
 			}

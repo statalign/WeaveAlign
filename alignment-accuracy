@@ -3,5 +3,5 @@ WVDIR=/home/seth/workspace/WeaveAlign
 
 dir=$( pwd )
 
-java -cp $WVDIR/WeaveAlign.jar wvalign.eval.AlignEvaluatorNew $dir/$1 $dir/$2
+java -cp $WVDIR/WeaveAlign.jar wvalign.eval.AlignEval $dir/$1 $dir/$2
 

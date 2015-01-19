@@ -43,11 +43,11 @@ public class FastaAlignmentTest {
 	public void testSorted() throws IOException {
 		FastaAlignment refAlignment = reader.readAlignment(inputStreamRef);
 		refAlignment.sortByName();
-		assertEquals(">elme", refAlignment.get(0).id);
-		assertEquals(">meleg", refAlignment.get(2).id);
+		assertEquals("elme", refAlignment.get(0).id);
+		assertEquals("meleg", refAlignment.get(2).id);
 		FastaAlignment testAlignment = reader.readAlignment(inputStream1);
 		testAlignment.sortByName();
-		assertEquals(">elme", testAlignment.get(0).id);
+		assertEquals("elme", testAlignment.get(0).id);
 	}
 	
 	@Test

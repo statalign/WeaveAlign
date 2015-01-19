@@ -1,0 +1,14 @@
+### Data selection procedure
+
+1. Selecting a large reference alignment
+From [OXBench version 1.3](http://www.compbio.dundee.ac.uk/downloads/oxbench/oxbench_1_3.tar.gz)
+one of the largest alignments was chosen, which was dataset number 12.
+(After unpacking the tar.gz file above, it can be found in: "oxbench_1_3/data/align/fasta/12" )
+It contains 122 protein sequences.
+
+2. Selecting diverse subsets of growing sizes
+In order to be able to conduct measurements of running times, and be less affected
+by different characteristics of alignments, we chose to select subsets of the same protein family.
+To avoid having too highly similar proteins in a subset, we used a simple algorithm
+to choose a maximally dissimilar protein (least similar to the already selected ones) in each round.
+We run this greedy algorithm to produce protein subsets of the *12* set of sizes: 15, 33, 60, in addition to the full set of 122 sequences. 

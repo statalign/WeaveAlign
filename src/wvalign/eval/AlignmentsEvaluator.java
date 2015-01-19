@@ -1,6 +1,7 @@
 package wvalign.eval;
 
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,8 +27,8 @@ public class AlignmentsEvaluator {
 
 	public void setReferenceInput(InputStream refStream) throws IOException {
 		refAlignment = alignReader.readAlignment(refStream);
-		System.out.println("Ref alignment size: " + refAlignment.getNumOfSequences() + 
-				"  width: " + refAlignment.getWidth());
+		System.out.println("Ref alignment: # seqs = " + refAlignment.getNumOfSequences() + 
+				", alignment length = " + refAlignment.getWidth());
 	}
 
 	public void setWvaInput(InputStream wvaStream) throws IOException {
@@ -41,17 +42,32 @@ public class AlignmentsEvaluator {
 			baseAlignments.add(al);
 		}
 	}
+	
+	public void readLogFile(String logFile) throws IOException {
+		readLogFile(logFile,0,Integer.MAX_VALUE);
+	}
 
+	public void readLogFile(String logFile, int first, int last) throws IOException {
+		System.out.print("Reading alignment log file...");
+		baseAlignments = alignReader.readLogFile(new FileInputStream(logFile),first,last);
+		System.out.println("done.");
+	}
+	
 	public void setOutputStream(OutputStream outStream) {
 		output = outStream;
 	}
 
 	public void evaluate() throws Exception {
+		evaluate(true);
+	}
+	public void evaluate(boolean printScoresToFile) throws Exception {
 		writeHeader();
 		writeWvaScores();
-		for (int i = 0; i < baseAlignments.size(); i++) {
-			FastaAlignment testAlign = baseAlignments.get(i);
-			writeBaseAlignScore(testAlign);			
+		if (printScoresToFile) {
+			for (int i = 0; i < baseAlignments.size(); i++) {			
+				FastaAlignment testAlign = baseAlignments.get(i);
+				writeBaseAlignScore(testAlign);			
+			}
 		}
 		printScoreStatsToScreen();
 	}
@@ -60,8 +76,10 @@ public class AlignmentsEvaluator {
 		int alignmentNum = baseAlignments.size();		
 		Percentile percentile = new Percentile();
 		double[] scores = new double[alignmentNum];
+		System.out.print("Computing accuracy of alignment samples...\n");
 		for (int i = 0; i < alignmentNum; i++) {
-			FastaAlignment testAlign = baseAlignments.get(i);			
+			FastaAlignment testAlign = baseAlignments.get(i);	
+			if (i % 100 == 0) System.out.println(i+" of "+alignmentNum);
 			if (type.equals("fsa")) {
 				scores[i] = refAlignment.getFsaScore(testAlign);
 			}
@@ -70,6 +88,7 @@ public class AlignmentsEvaluator {
 			}
 			else throw new RuntimeException("Score type `"+type+"' not recognised.");
 		}
+		System.out.println("...done.");
 		percentile.setData(scores);
 		return percentile;
 	}
@@ -103,9 +122,9 @@ public class AlignmentsEvaluator {
 	private void printSummaryToScreen(double wvaScore, double[] scores,String scoreName) {
 		double rankScore = computeWvaRank(wvaScore,scores);		
 		//double wvaPercentile = 100.0 * (1.0 - (0.1* rank / inputAlignNum));
-		System.out.print("\nRank score = "+rankScore);
-		System.out.println(" (WeaveAlign's alignment scores better than " + rankScore 
-				+ "% of the input alignments, using the "+ scoreName + " score)");
+		System.out.printf("\nWeaveAlign rank score = %.3f",rankScore/100);
+		System.out.printf("\n(WeaveAlign's alignment is more accurate than %.1f"   
+				+ "%% of the input alignments, using the %s score)\n", rankScore, scoreName);
 	}
 
 	private void writeBaseAlignScore(FastaAlignment testAlign) throws Exception {

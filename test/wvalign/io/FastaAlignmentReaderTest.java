@@ -36,8 +36,8 @@ public class FastaAlignmentReaderTest {
 		assertNotNull(align);
 		assertEquals(4, align.getNumOfSequences());
 		// automatic sorting by name!
-		assertEquals(">emelet", align.get(1).id);
-		assertEquals(">mellett", align.get(3).id);
+		assertEquals("emelet", align.get(1).id);
+		assertEquals("mellett", align.get(3).id);
 	}
 
 	@Test

@@ -28,7 +28,7 @@ import wvalign.utils.Utils;
 
 
 public class WeaveMain {
-	public static final String WVALIGN_VERSION = "v1.0";
+	public static final String WVALIGN_VERSION = "v1.2";
 
 	private static final double DEF_G = 0;
 	private static final String DEF_MPD_EXTENSION = ".mpd";
@@ -37,12 +37,11 @@ public class WeaveMain {
 	private static final String DEF_SCORE_EXTENSION = ".scr";
 	
 	private static final String USAGE =
-		"WeaveAlign "+WVALIGN_VERSION+" (C) Adam Novak, Joe Herman 2010-14.\n\n"
+		"WeaveAlign "+WVALIGN_VERSION+" (C) Adam Novak, Joe Herman 2010-15.\n\n"
 		+
 		"Usage:\n\n" +
 		"    java -jar WeaveAlign.jar [options] input_1.fsa input_2.fsa [input_3.fsa...]\n" +
-		"    java -jar WeaveAlign.jar [options] input_1.log\n\n"
-		+
+		"    java -jar WeaveAlign.jar [options] input_1.log\n\n" +
 		"Description:\n\n" +
 		"    Generates a summary alignment from a collection of alignments using the\n" +
 		"    minimum risk (MinRisk) strategy. Alignments may be given in FASTA format\n" +
@@ -118,7 +117,11 @@ public class WeaveMain {
 		"        for each topology.\n\n"
 		+
 		"    -t treefile\n" +
-		"        Sets the file containing an initial tree.\n\n"
+		"        Sets the file containing an initial tree.\n\n" +		
+		"To compute the accuracy of an alignment relative to a reference:\n\n"+
+		"    java -cp WeaveAlign.jar wvalign.eval.AlignEval reference.fsa test.fsa\n\n" +
+		"To compute the accuracy of a set of alignments relative to a reference:\n\n"+
+		"    java -cp WeaveAlign.jar wvalign.eval.AlignSetEval refAli.fasta wvaSummary.fasta aliSamples.log [output.file firstSample lastSample]";		
 //		+
 //		"  Annotation options:\n\n"
 //		+
@@ -402,7 +405,6 @@ public class WeaveMain {
 				dagIf.getDag().updateSequences();				
 				//model = new Wag();
 				model = new Dayhoff();
-				//treeSampler = new TreeSampler(dagIf.getDag(),new Dayhoff(),input0+".trees");				
 				treeSampler = new MarginalTree(dagIf.getDag(),model,input0+".trees");
 			
 				if (sampleTrees) {
@@ -420,7 +422,7 @@ public class WeaveMain {
 						}					
 					}
 					else {
-						// Need to set up a random tree of some kind
+						// TODO set up a random tree of some kind
 					}
 					treeSampler.sampleTrees(treeIterations);
 					return; 
@@ -453,11 +455,8 @@ public class WeaveMain {
 						}
 					}
 					boolean useAverage = true;
-//					double marginalLikelihood = Utils.log0;
 					double tot = Utils.log0;
 					for (Set<List<String> > split : sampledTrees.keySet()) {
-						//double averageLikelihood = 0;
-//						for (double ll : sampledTrees.get(split)) marginalLikelihood = Utils.logAdd(marginalLikelihood,ll);
 						if (useAverage) {
 							double averageLikelihood = 0;
 							for (double ll : sampledTrees.get(split)) averageLikelihood += ll/sampledTrees.get(split).size();
@@ -470,11 +469,6 @@ public class WeaveMain {
 						}
 					}			
 					for (Set<List<String> > split : sampledTrees.keySet()) {
-//						double treeLikelihood = Utils.log0;
-//						for (double ll : sampledTrees.get(split)) treeLikelihood = Utils.logAdd(treeLikelihood,ll);
-//						writer.write(split+"\t"+(treeLikelihood-marginalLikelihood)+"\n");
-//						double treeLikelihood = 0;
-//						for (double ll : sampledTrees.get(split)) treeLikelihood += ll/sampledTrees.get(split).size();
 						if (useAverage) {
 							double treeLikelihood = 0;
 							for (double ll : sampledTrees.get(split)) treeLikelihood += ll/sampledTrees.get(split).size();
@@ -485,9 +479,6 @@ public class WeaveMain {
 							for (double ll : sampledTrees.get(split)) maxLikelihood = (ll > maxLikelihood) ? ll : maxLikelihood;
 							writer.write(split+"\t"+Math.exp(maxLikelihood-tot)+"\n");
 						}
-						// Using maxLikelihood is very unstable with respect to the 
-						// set of trees used as input, but gives more sensible
-						// results than averageLikelihood
 					}
 					writer.close();
 				}
@@ -512,13 +503,11 @@ public class WeaveMain {
 			}
 			if(dagIf.getAnnotator() != null)
 				lastDataProb = dagIf.getAnnotator().getDataProb();
-			//if (countPaths) {
 			if (countPaths & !computePosterior) {
 		    	dagIf.computeEquivalenceClassFreqs();			    
 		    	System.out.println("Counting number of paths...");
 		    	System.out.println("Log number of paths in DAG = "+dagIf.logNPaths());
 		    }
-			//}
 			System.err.println("Done.");
 		} catch (IOException e) {
 			e.printStackTrace();
