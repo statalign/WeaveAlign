@@ -9,7 +9,7 @@ How to compile and run (on linux):
     On the command line, while in the WeaveAlign directory, run:
     $ ./build-all.sh
  3. Run the example:
-    $ ./run-example.sh
+    $ ./example.sh
 
     
 For more info, have a look at the user manual on the project webpage: 
