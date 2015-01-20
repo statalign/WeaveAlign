@@ -28,6 +28,7 @@ dependencies {
   compile 'org.hamcrest:hamcrest-core:1.3'
   compile 'commons-io:commons-io:2.4'
   compile 'gov.nist.math:Jama:1.0.3'
+  compile name: 'data'
   compile name: 'options'
   compile name: 'jlibeps'
 }
