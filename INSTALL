@@ -1,0 +1,13 @@
+How to compile and run (on linux):
+ 0. Prerequisites: You'll need java JDK.
+ 1. Install gradle (if you don't have at least version 1.5), run:
+    ./install_gradle.sh
+    Or install a version by hand, see here:
+    http://www.gradle.org/installation
+    (3 easy steps: download, unpack, add to PATH)
+ 2. Build the jar file:
+    On the command line, while in the WeaveAlign directory, run:
+    $ ./build-all.sh
+ 3. Run the examples (optional):
+    $ ./minrisk-example.sh
+    $ ./minrisk-rankscore-example.sh
