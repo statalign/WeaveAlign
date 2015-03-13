@@ -472,7 +472,7 @@ public class WeaveMain {
 						if (useAverage) {
 							double treeLikelihood = 0;
 							for (double ll : sampledTrees.get(split)) treeLikelihood += ll/sampledTrees.get(split).size();
-							writer.write(split+"\t"+Math.exp(treeLikelihood-tot)+"\n");
+							writer.write(split+"\t"+Math.exp(treeLikelihood-tot)+"\n");							
 						}
 						else {
 							double maxLikelihood = Double.NEGATIVE_INFINITY;
