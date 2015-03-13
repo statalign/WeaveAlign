@@ -28,7 +28,7 @@ import wvalign.utils.Utils;
 
 
 public class WeaveMain {
-	public static final String WVALIGN_VERSION = "v1.2";
+	public static final String WVALIGN_VERSION = "v1.2.1";
 
 	private static final double DEF_G = 0;
 	private static final String DEF_MPD_EXTENSION = ".mpd";

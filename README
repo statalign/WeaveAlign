@@ -1,16 +1,22 @@
-How to compile and run (on linux):
- 0. Prerequisites: You'll need java JDK.
- 1. Install gradle (if you don't have at least version 1.5), run:
-    ./install_gradle.sh
-    Or install a version by hand, see here:
-    http://www.gradle.org/installation
-    (3 easy steps: download, unpack, add to PATH)
- 2. Build the jar file:
-    On the command line, while in the WeaveAlign directory, run:
-    $ ./build-all.sh
- 3. Run the example:
-    $ ./example.sh
+WeaveAlign is a framework for combining a collection of multiple sequence alignments into a directed acyclic graph (DAG) structure, so as to permit efficient inference on very large sets of possible alignments.
 
-    
-For more info, have a look at the user manual on the project webpage: 
-http://statalign.github.io/WeaveAlign/doc/user_manual.html
+Due to interchanges and crossovers in the DAG, the number of alignments encoded in the graph is typically many orders of magnitude greater than the number of alignment samples used to generate the DAG, such that the effective sample size is greatly increased by this representation.
+
+This allows for more efficient estimation of the posterior probabilities of each sampled alignment, and enables summary alignments to be generated that maximise the expected accuracy under various different types of score functions.
+
+The DAG structure also facilitates the propagation of alignment uncertainty into downstream inference, allowing for various algorithms to be carried out on the very large space of possible alignments encoded in the graph.
+
+WeaveAlign can be used in conjunction with statistical alignment software such as StatAlign, which generates alignments sampled according to their posterior probability under a probabilistic model of substitution, insertion and deletion. 
+
+For more information, see
+
+Herman JL, Novák Á, Lyngsø R, Szabó A, Miklós I and Hein J (2014)
+"Efficient representation of uncertainty in multiple sequence alignments using directed acyclic graphs."
+  
+Usage information can be obtained by running
+
+java -jar WeaveAlign.jar
+
+Further details can be found at the WeaveAlign website: 
+
+http://statalign.github.io/WeaveAlign
