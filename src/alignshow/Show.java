@@ -43,10 +43,10 @@ public class Show extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 
-	public static final String MPDSHOW_VERSION = "v1.1.4";
+	public static final String MPDSHOW_VERSION = "v1.1.5";
 
 	private static final String USAGE =
-		"MPDSHOW "+MPDSHOW_VERSION+" (C) Adam Novak & Joe Herman, 2010-13.\n\n"
+		"MPDSHOW "+MPDSHOW_VERSION+" (C) Adam Novak & Joe Herman, 2010-17.\n\n"
 		+
 		"Usage:\n\n" +
 		"    java -jar alignshow.jar [options] file.fsa/mpd\n\n\n"
@@ -67,8 +67,11 @@ public class Show extends JFrame {
 		"    -o ORDERFILE\n" +
 		"        Specifies the order of the sequences.\n\n"
 		+
+	    	"    -r=a,b\n" +
+		"        The alignment will be displayed only for colummn indices in the range [a,b].\n\n"
+		+
 		"    -g GROUPINGFILE\n" +
-		"        Sequence grouping markup per column.\n\n";
+		"        Sequence grouping markup per column (NB use of the -g and -r options together is currently unsupported).\n\n";
 
 	private static Color[] DEF_COLORS = {
 		Color.blue, Color.red, Color.green, Color.black, Color.orange, Color.gray
@@ -152,11 +155,12 @@ public class Show extends JFrame {
 
 		getContentPane().add(panel, BorderLayout.SOUTH);
 
+		panel.setPreferredSize(new Dimension(alignGui.getPreferredSize().width,panel.getPreferredSize().height));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		pack();
 		setLocationRelativeTo(null);
 		if(scroll.getHorizontalScrollBar().isVisible()) {// && getContentPane().getPreferredSize().height < Toolkit.getDefaultToolkit().getScreenSize().height) {
-			getContentPane().setPreferredSize(addDimY(addDimY(alignGui.getPreferredSize(), panel.getPreferredSize()),
+		    			getContentPane().setPreferredSize(addDimY(addDimY(alignGui.getPreferredSize(), panel.getPreferredSize()),							
 					scroll.getHorizontalScrollBar().getSize()));
 			pack();
 		}
@@ -179,7 +183,8 @@ public class Show extends JFrame {
 				.addOption("t", Separator.BLANK, Multiplicity.ZERO_OR_MORE)
 				.addOption("c", Separator.EQUALS, Multiplicity.ZERO_OR_MORE)
 				.addOption("o", Separator.BLANK, Multiplicity.ZERO_OR_ONE)
-				.addOption("g", Separator.BLANK, Multiplicity.ZERO_OR_ONE);
+		    		.addOption("r", Separator.EQUALS, Multiplicity.ZERO_OR_ONE)
+		    .addOption("g", Separator.BLANK, Multiplicity.ZERO_OR_ONE);
 		
 		OptionSet set;
 		if ((set = opt.getMatchingSet(false, false)) == null) {
@@ -224,10 +229,22 @@ public class Show extends JFrame {
 				
 			}
 			
-			alignGui.alignment = convertAlign(seqs, orderMap);
+			
+			alignGui.setAlignment(convertAlign(seqs, orderMap));
+
+			if(set.isSet("r")) {
+			    //String ref = set.getOption("r").getResultValue(0);
+			    String[] r = set.getOption("r").getResultValue(0).split(",");
+			    int a = Integer.parseInt(r[0]);
+			    int b = Integer.parseInt(r[1]);
+			    alignGui.setRange(a,b);
+			}
 			
 //			System.out.println("as");
 			if(set.isSet("g")) {
+			    if(set.isSet("r")) {
+				throw new RuntimeException("Use of the -g and -r options together is currently unsupported.\n");
+			    }
 				int n = alignGui.alignment.length;
 				int[] convTab = new int[n];
 				if(orderMap != null) {
