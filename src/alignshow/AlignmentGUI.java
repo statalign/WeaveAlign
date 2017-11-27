@@ -216,7 +216,7 @@ public class AlignmentGUI extends JPanel{
 						OFFSET_X + (tab+1) * COLUMN_WIDTH, startY - OFFSET_Y);
 				g.setStroke(basic);
 				g.drawString("0.0", OFFSET_X + (tab+1) * COLUMN_WIDTH - 35, startY - OFFSET_Y + 3);
-				g.drawString("Max", OFFSET_X + (tab+1) * COLUMN_WIDTH - 35, startY - OFFSET_Y - colHeight + 5);
+				g.drawString(""+max, OFFSET_X + (tab+1) * COLUMN_WIDTH - 35, startY - OFFSET_Y - colHeight + 5);
 				g.setStroke(st);
 			}
 			
