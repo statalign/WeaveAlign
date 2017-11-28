@@ -91,13 +91,13 @@ public class AlignmentGUI extends JPanel{
 	}
 
     public void setAlignment(String[] ali) {
-	alignment = ali;
-	range[0] = 1;
-	range[1] = ali[0].length();
+		alignment = ali;
+		range[0] = 1;
+		range[1] = ali[0].length();
     }
     public void setRange(int a, int b) {
-	range[0] = Math.max(a,1);
-	range[1] = Math.min(b,alignment[0].length());
+		range[0] = Math.max(a,1);
+		range[1] = Math.min(b,alignment[0].length());
     }
 	private static boolean allTab(String[] s, int p){
 		boolean b = true;

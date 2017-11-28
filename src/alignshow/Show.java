@@ -66,9 +66,13 @@ public class Show extends JFrame {
 		"    -o ORDERFILE\n" +
 		"        Specifies the order of the sequences.\n\n"
 		+
-		"    -f \n" +
-		"        Specifies that the alignment image should be written to file rather than being" +
-		"        plotted interactively. The file to be written to is 'file.fsa.png'.\n\n"
+		"    -png \n" +
+		"        Specifies that the alignment image should be written to file rather than being\n" +
+		"        plotted interactively. The default file to be written to is 'file.fsa.png', but\n" +
+		"        this can be modified using the -f option.\n\n"
+		+
+		"    -f PNGFILE\n" +
+		"        Specifies the name of the PNG file to be printed to. This also activates the -png option.\n\n"
 		+
     	"    -r=a,b\n" +
 		"        The alignment will be displayed only for colummn indices in the range [a,b].\n\n"
@@ -196,7 +200,8 @@ public class Show extends JFrame {
 				.addOption("t", Separator.BLANK, Multiplicity.ZERO_OR_MORE)
 				.addOption("c", Separator.EQUALS, Multiplicity.ZERO_OR_MORE)
 				.addOption("o", Separator.BLANK, Multiplicity.ZERO_OR_ONE)
-				.addOption("f")
+				.addOption("f", Separator.BLANK, Multiplicity.ZERO_OR_ONE)
+				.addOption("png")
 				.addOption("r", Separator.EQUALS, Multiplicity.ZERO_OR_ONE)
 		    .addOption("g", Separator.BLANK, Multiplicity.ZERO_OR_ONE);
 		
@@ -255,13 +260,17 @@ public class Show extends JFrame {
 			    alignGui.setRange(a,b);
 			}
 			
-			if(set.isSet("f")) {				
+			if(set.isSet("png")) {				
+				interactive = false;				
+			}
+			if(set.isSet("f")) {
 				interactive = false;
+				alignGui.setPngFile(set.getOption("f").getResultValue(0));
 			}
 //			System.out.println("as");
 			if(set.isSet("g")) {
 			    if(set.isSet("r")) {
-				throw new RuntimeException("Use of the -g and -r options together is currently unsupported.\n");
+			    	throw new RuntimeException("Use of the -g and -r options together is currently unsupported.\n");
 			    }
 				int n = alignGui.alignment.length;
 				int[] convTab = new int[n];

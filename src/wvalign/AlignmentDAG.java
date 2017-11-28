@@ -203,7 +203,7 @@ public class AlignmentDAG {
 			}
 			writer.close();
 			if (plot) {
-				alignshow.Show.main(new String[]{"-t",scoreFile,"-f",outputFile});		
+				alignshow.Show.main(new String[]{"-t",scoreFile,"-png",outputFile});		
 			}
 			
 		}
