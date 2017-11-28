@@ -41,6 +41,13 @@ public class AlignmentGUI extends JPanel{
 	 *  The alignment that is written onto the screen is stored in this array
 	 */
 	public String[] alignment = null;
+
+    /**
+       The range (specified in terms of the index along refSeq) to print
+    */
+    public int[] range = new int[2];
+    public String refSeq;
+    
 	/**
 	 * The title of the current analysis
 	 */
@@ -83,6 +90,15 @@ public class AlignmentGUI extends JPanel{
 		pngFile = title + ".png";
 	}
 
+    public void setAlignment(String[] ali) {
+	alignment = ali;
+	range[0] = 1;
+	range[1] = ali[0].length();
+    }
+    public void setRange(int a, int b) {
+	range[0] = Math.max(a,1);
+	range[1] = Math.min(b,alignment[0].length());
+    }
 	private static boolean allTab(String[] s, int p){
 		boolean b = true;
 		for(int i = 0; i < s.length && b; i++){
@@ -122,6 +138,7 @@ public class AlignmentGUI extends JPanel{
 			while(!allTab(alignment, tab)){
 				tab--;
 			}
+			if (range[1]==alignment[0].length()) range[1] -= (tab+1);
 
 			if(showTitle) {
 				g.setColor(Color.BLACK);
@@ -135,8 +152,11 @@ public class AlignmentGUI extends JPanel{
 			// print alignment
 			for (int i = 0; i < alignment.length; i++) {
 				//System.out.println(alignment[i]);
-				for (int j = 0; j < alignment[i].length(); j++) {
-					if(j>tab){
+			    for (int j = 0; j < Math.min(alignment[i].length(),range[1]+tab+1); j++) {
+				int jPos = j;
+				if(j>tab){
+				    jPos -= range[0]-1;
+					    if (j<range[0]+tab) continue;
 						Color color = subst.getColor(alignment[i].charAt(j));
 						if(grouping.size() > 0) {
 							double mod = grouping.get(j-tab-1).contains(i) ? 1.3 : 0.65;
@@ -145,7 +165,7 @@ public class AlignmentGUI extends JPanel{
 									lims((int)(color.getBlue()*mod+.5)));
 						}
 						g.setColor(color);
-						g.fillRect(OFFSET_X + COLUMN_WIDTH * j,
+						g.fillRect(OFFSET_X + COLUMN_WIDTH * (j-range[0]+1),
 								startY + FONT_HEIGHT * i + 3, 
 								COLUMN_WIDTH+1,
 								FONT_HEIGHT+1);
@@ -153,7 +173,7 @@ public class AlignmentGUI extends JPanel{
 					}
 					g.setColor(Color.BLACK);
 					g.drawString(alignment[i].charAt(j) + "",
-							OFFSET_X + COLUMN_WIDTH * j + 2,
+						     OFFSET_X + COLUMN_WIDTH * jPos + 2,
 							startY + FONT_HEIGHT * (i+1));
 
 				}
@@ -194,14 +214,14 @@ public class AlignmentGUI extends JPanel{
 			if(tracks.size() != 0) {
 				g.setStroke(dotted);
 				g.drawLine(OFFSET_X + (tab+1) * COLUMN_WIDTH - 10, startY - OFFSET_Y - colHeight,
-						OFFSET_X + (tab+1+tracks.get(0).size()) * COLUMN_WIDTH, startY - OFFSET_Y - colHeight);
+					   OFFSET_X + (tab+1+Math.min(range[1]-range[0]+1,tracks.get(0).size())) * COLUMN_WIDTH, startY - OFFSET_Y - colHeight);
 				g.drawLine(OFFSET_X + (tab+1) * COLUMN_WIDTH - 10, startY - OFFSET_Y,
-						OFFSET_X + (tab+1+tracks.get(0).size()) * COLUMN_WIDTH, startY - OFFSET_Y);
+					   OFFSET_X + (tab+1+Math.min(range[1]-range[0]+1,tracks.get(0).size())) * COLUMN_WIDTH, startY - OFFSET_Y);
 				g.drawLine(OFFSET_X + (tab+1) * COLUMN_WIDTH, startY - OFFSET_Y - colHeight,
 						OFFSET_X + (tab+1) * COLUMN_WIDTH, startY - OFFSET_Y);
 				g.setStroke(basic);
 				g.drawString("0.0", OFFSET_X + (tab+1) * COLUMN_WIDTH - 35, startY - OFFSET_Y + 3);
-				g.drawString("Max", OFFSET_X + (tab+1) * COLUMN_WIDTH - 35, startY - OFFSET_Y - colHeight + 5);
+				g.drawString(""+max, OFFSET_X + (tab+1) * COLUMN_WIDTH - 35, startY - OFFSET_Y - colHeight + 5);
 				g.setStroke(st);
 			}
 			
@@ -212,13 +232,13 @@ public class AlignmentGUI extends JPanel{
 				g.setColor(colors.get(track));
 				//int colHeight = Math.min(100, g.getClipBounds().height - (2 * OFFSET_Y + TITLE_Y + alignment.length * FONT_HEIGHT));
 				List<Double> tr = tracks.get(track);
-				for(int i = 1; i < tr.size(); i++){
+				for(int i = range[0]; i < Math.min(tr.size(),range[1]); i++){
 					if (tr.get(i-1) == null || Double.isNaN(tr.get(i-1))) { continue; }
 					if (tr.get(i) == null || Double.isNaN(tr.get(i))) { ++i; continue; }
-					g.drawLine( OFFSET_X + (tab + i) * COLUMN_WIDTH + COLUMN_WIDTH / 2,
+					g.drawLine( OFFSET_X + (tab + i - range[0] + 1) * COLUMN_WIDTH + COLUMN_WIDTH / 2,
 							(int)(startY - OFFSET_Y - Math.round(tr.get(i-1) * (colHeight) / max)),
 //							(int)(OFFSET_Y + TITLE_Y - Math.round(decoding[i-1] * (TITLE_Y) / max)),
-							OFFSET_X + (tab + i + 1) * COLUMN_WIDTH + COLUMN_WIDTH / 2,
+							OFFSET_X + (tab + i - range[0] + 2) * COLUMN_WIDTH + COLUMN_WIDTH / 2,
 							(int)(startY - OFFSET_Y - Math.round(tr.get(i) * (colHeight) / max))
 //							(int)(OFFSET_Y + TITLE_Y - Math.round(decoding[i] * (TITLE_Y) / max))
 							);
@@ -250,7 +270,7 @@ public class AlignmentGUI extends JPanel{
 	 */
 	@Override
 	public Dimension getPreferredSize() {
-		int len = alignment == null ? aligLen : alignment[0].length();
+	    int len = alignment == null ? aligLen : Math.min(range[1]-range[0]+5,alignment[0].length());
 		int num = alignment == null ? aligNum : alignment.length;
 		return new Dimension(OFFSET_X + COLUMN_WIDTH * len + 30, 4*OFFSET_Y + (showTitle?TITLE_Y:-OFFSET_Y) + FONT_HEIGHT * num + (tracks.size() == 0 ? -OFFSET_Y : 150));
 	}

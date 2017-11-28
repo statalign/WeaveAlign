@@ -46,7 +46,10 @@ public class WeaveMain {
 		"    Generates a summary alignment from a collection of alignments using the\n" +
 		"    minimum risk (MinRisk) strategy. Alignments may be given in FASTA format\n" +
 		"    or in StatAlign's log format. A reliability score is calculated for each\n"+
-		"    column of the summary alignment.\n\n"
+		"    column of the summary alignment.\n\n" +
+		"    WeaveAlign can also carry out various other types of analysis\n" +
+                "    on the DAG representation of the alignment set. See below for further\n" +
+                "    options, and see http://statalign.github.io/WeaveAlign for details.\n\n"
 		+
 		"Options:\n\n" +
 		"    -out output.fsa\n" +
@@ -104,16 +107,16 @@ public class WeaveMain {
 		"        Count the number of paths in the DAG, and output to STDOUT.\n\n"
 		+
 		"    -sampleTrees=N\n" +
-		"        Ramdomly sample tree topologies for N iterations, " +
-		"        recording the approximate marginal likelihood for" +
-		"        each unique topology, summed over all alignments" +
+		"        Ramdomly sample tree topologies for N iterations, \n" +
+		"        recording the approximate marginal likelihood for\n" +
+		"        each unique topology, summed over all alignments\n" +
 		"        in the DAG. Default N=1000.\n\n"
 		+
 		"    -scoreTrees NEXUS_FILE\n" +
-		"        For each tree in NEXUS_FILE, compute the marginal log likelihood" +
-		"        summing over all alignments in the DAG. The inputted trees are" +
-		"        then grouped according to unrooted topologies and printed to" +
-		"        NEXUS_FILE.ll, with marginal likelihoods summed over all trees" +
+		"        For each tree in NEXUS_FILE, compute the marginal log likelihood\n" +
+		"        summing over all alignments in the DAG. The inputted trees are\n" +
+		"        then grouped according to unrooted topologies and printed to\n" +
+		"        NEXUS_FILE.ll, with marginal likelihoods summed over all trees\n" +
 		"        for each topology.\n\n"
 		+
 		"    -t treefile\n" +
@@ -472,7 +475,7 @@ public class WeaveMain {
 						if (useAverage) {
 							double treeLikelihood = 0;
 							for (double ll : sampledTrees.get(split)) treeLikelihood += ll/sampledTrees.get(split).size();
-							writer.write(split+"\t"+Math.exp(treeLikelihood-tot)+"\n");
+							writer.write(split+"\t"+Math.exp(treeLikelihood-tot)+"\n");							
 						}
 						else {
 							double maxLikelihood = Double.NEGATIVE_INFINITY;

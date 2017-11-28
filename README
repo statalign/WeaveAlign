@@ -10,8 +10,8 @@ WeaveAlign can be used in conjunction with statistical alignment software such a
 
 For more information, see
 
-Herman JL, Novák Á, Lyngsø R, Szabó A, Miklós I and Hein J (2014)
-"Efficient representation of uncertainty in multiple sequence alignments using directed acyclic graphs."
+Herman JL, Novák Á, Lyngsø R, Szabó A, Miklós I and Hein J (2015)
+"Efficient representation of uncertainty in multiple sequence alignments using directed acyclic graphs." BMC Bioinformatics 16:108.
   
 Usage information can be obtained by running
 
