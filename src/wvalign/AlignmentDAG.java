@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import wvalign.io.RawSequences;
 import wvalign.utils.MuInt;
 
 
@@ -167,15 +168,17 @@ public class AlignmentDAG {
 	public long getAnnotTime() {
 		return annotator.annotTime;
 	}
-	
 	public void finalise() throws IOException {
-		updateAll();
+		finalise(true);
+	}
+	public void finalise(boolean plot) throws IOException {
+		updateAll();		
 		FileWriter writer = new FileWriter(outputFile);
 		try{
 			for(int i = 0; i < alignment.length; i++) {
 				String[] row = alignment[i].split("\t");
 				writer.write(">");
-				writer.write(row[0]);
+				writer.write(row[0]);				
 				writer.write("\n");
 				writer.write(row[1]);
 				writer.write("\n");
@@ -191,7 +194,7 @@ public class AlignmentDAG {
 				if(decoding != null) {
 					if(decodingGi != null) {
 						for(int i = 0; i < decoding.size(); i++)
-							writer.write(decoding.get(i)+"\t"+decodingGi.get(i)+"\n");
+							writer.write(decodingGi.get(i)+"\n");
 					} else {
 						for(int i = 0; i < decoding.size(); i++)
 							writer.write(decoding.get(i)+"\n");
@@ -199,6 +202,10 @@ public class AlignmentDAG {
 				}
 			}
 			writer.close();
+			if (plot) {
+				alignshow.Show.main(new String[]{"-t",scoreFile,"-f",outputFile});		
+			}
+			
 		}
 		catch(IOException e){
 		}

@@ -57,6 +57,8 @@ public class AlignmentGUI extends JPanel{
 	
 	private int aligNum = 15;
 	private int aligLen = 200;
+	
+	private String pngFile;
 
 	static final int COLUMN_WIDTH = 11;
 	static final int FONT_HEIGHT = 15;
@@ -78,6 +80,7 @@ public class AlignmentGUI extends JPanel{
 	public AlignmentGUI(String title, SubstitutionModel subst) {
 		this.title = title;
 		this.subst = subst;
+		pngFile = title + ".png";
 	}
 
 	private static boolean allTab(String[] s, int p){
@@ -258,6 +261,9 @@ public class AlignmentGUI extends JPanel{
 		repaint();
 	}
 
+	public void saveAsImage() throws IOException {
+		saveAsImage(new File(pngFile));
+	}
 	public void saveAsImage(File file) throws IOException {
 		BufferedImage im = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics g = im.getGraphics();
@@ -270,5 +276,13 @@ public class AlignmentGUI extends JPanel{
 		paintFunc(g, false);
 		g.flush();
 		g.close();
+	}
+
+	public String getPngFile() {
+		return pngFile;
+	}
+
+	public void setPngFile(String pngFile) {
+		this.pngFile = pngFile;
 	}
 }

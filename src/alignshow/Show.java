@@ -43,10 +43,10 @@ public class Show extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 
-	public static final String MPDSHOW_VERSION = "v1.1.4";
-
+	public static final String MPDSHOW_VERSION = "v1.1.5";
+	
 	private static final String USAGE =
-		"MPDSHOW "+MPDSHOW_VERSION+" (C) Adam Novak & Joe Herman, 2010-13.\n\n"
+		"MPDSHOW "+MPDSHOW_VERSION+" (C) Adam Novak & Joe Herman, 2010-17.\n\n"
 		+
 		"Usage:\n\n" +
 		"    java -jar alignshow.jar [options] file.fsa/mpd\n\n\n"
@@ -67,6 +67,10 @@ public class Show extends JFrame {
 		"    -o ORDERFILE\n" +
 		"        Specifies the order of the sequences.\n\n"
 		+
+		"    -f \n" +
+		"        Specifies that the alignment image should be written to file rather than being" +
+		"        plotted interactively. The file to be written to is 'file.fsa.png'.\n\n"		
+		+
 		"    -g GROUPINGFILE\n" +
 		"        Sequence grouping markup per column.\n\n";
 
@@ -76,7 +80,7 @@ public class Show extends JFrame {
 	
 	private AlignmentGUI alignGui;
 	
-	public Show(AlignmentGUI align) {
+	public Show(AlignmentGUI align, boolean visible) {
 		super("Annotated alignment");
 		alignGui = align;
 		
@@ -160,7 +164,17 @@ public class Show extends JFrame {
 					scroll.getHorizontalScrollBar().getSize()));
 			pack();
 		}
-		setVisible(true);
+		if (!visible) {
+			try {				
+				alignGui.setShowTitle(false);
+				alignGui.saveAsImage();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}			
+			dispose();
+		}
+		else setVisible(true);
 	}
 	
 	private Dimension addDimY(Dimension d1, Dimension d2) {
@@ -171,14 +185,15 @@ public class Show extends JFrame {
 		if(file.exists() && JOptionPane.showConfirmDialog(Show.this, "Overwrite existing file?", "Confirm overwrite", JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION)
 			return false;
 		return true;
-	}
+	}	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) {		
 		Options opt = new Options(args, Multiplicity.ZERO_OR_ONE, 1, 1);
 		opt.addSet("run")
 				.addOption("t", Separator.BLANK, Multiplicity.ZERO_OR_MORE)
 				.addOption("c", Separator.EQUALS, Multiplicity.ZERO_OR_MORE)
 				.addOption("o", Separator.BLANK, Multiplicity.ZERO_OR_ONE)
+				.addOption("f")
 				.addOption("g", Separator.BLANK, Multiplicity.ZERO_OR_ONE);
 		
 		OptionSet set;
@@ -186,7 +201,8 @@ public class Show extends JFrame {
 			System.out.println(USAGE);
 			System.exit(1);
 		}
-		
+					
+		boolean interactive = true;		
 		try {
 			MpdReader reader = new MpdReader();
 			File input = new File(set.getData().get(0));
@@ -226,6 +242,9 @@ public class Show extends JFrame {
 			
 			alignGui.alignment = convertAlign(seqs, orderMap);
 			
+			if(set.isSet("f")) {				
+				interactive = false;
+			}
 //			System.out.println("as");
 			if(set.isSet("g")) {
 				int n = alignGui.alignment.length;
@@ -282,7 +301,7 @@ public class Show extends JFrame {
 				alignGui.colors.set(i, getColor(colorData.getResultValue(i)));
 			}
 
-			new Show(alignGui);
+			new Show(alignGui,interactive);			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
