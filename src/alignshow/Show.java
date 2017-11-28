@@ -77,6 +77,10 @@ public class Show extends JFrame {
     	"    -r=a,b\n" +
 		"        The alignment will be displayed only for colummn indices in the range [a,b].\n\n"
 		+
+		"    -r=SEQNAME,SUBSEQUENCE\n" +
+		"        The alignment will be displayed only for the columns containing the first occurrence of\n" +
+		"        SUBSEQUENCE in sequence SEQNAME.\n\n"
+		+
 		"    -g GROUPINGFILE\n" +
 		"        Sequence grouping markup per column (NB use of the -g and -r options together is currently unsupported).\n\n";
 
@@ -254,10 +258,16 @@ public class Show extends JFrame {
 
 			if(set.isSet("r")) {
 			    //String ref = set.getOption("r").getResultValue(0);
+				boolean numericRange = set.getOption("r").getResultValue(0).matches("[,0-9]+");
 			    String[] r = set.getOption("r").getResultValue(0).split(",");
-			    int a = Integer.parseInt(r[0]);
-			    int b = Integer.parseInt(r[1]);
-			    alignGui.setRange(a,b);
+			    if(numericRange) {
+				    int a = Integer.parseInt(r[0]);
+				    int b = Integer.parseInt(r[1]);
+				    alignGui.setRange(a,b);
+			    }
+			    else {
+			    	alignGui.setRange(r[0],r[1]);
+			    }
 			}
 			
 			if(set.isSet("png")) {				

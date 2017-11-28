@@ -12,10 +12,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-
 
 import org.sourceforge.jlibeps.epsgraphics.EpsGraphics2D;
 
@@ -61,6 +62,7 @@ public class AlignmentGUI extends JPanel{
 	public List<List<Integer>> grouping = new ArrayList<List<Integer>>();
 	
 	private boolean showTitle = true;
+	private boolean subtractTab = false;
 	
 	private int aligNum = 15;
 	private int aligLen = 200;
@@ -98,6 +100,24 @@ public class AlignmentGUI extends JPanel{
     public void setRange(int a, int b) {
 		range[0] = Math.max(a,1);
 		range[1] = Math.min(b,alignment[0].length());
+    }
+    public void setRange(String seqName, String subsequence) {
+    	String regex = subsequence.replace("","-*");
+    	for (String seq : alignment) {
+    		if (seq.contains(seqName)) {    			
+    			Pattern pattern = Pattern.compile(regex);
+    			Matcher matcher = pattern.matcher(seq);
+    			if(!matcher.find()){
+    				throw new RuntimeException("Subsequence '"+subsequence+"' not found in sequence '"+seqName+"'\n");
+    			}
+    			range[0] = matcher.start()+1;    		
+    			range[1] = matcher.end();
+    			subtractTab = true;
+    			return;
+    		}    		
+    	}
+    	throw new RuntimeException("Sequence '"+seqName+"' not found.\n");
+		
     }
 	private static boolean allTab(String[] s, int p){
 		boolean b = true;
@@ -137,6 +157,10 @@ public class AlignmentGUI extends JPanel{
 			int tab =alignment[0].length()-2;
 			while(!allTab(alignment, tab)){
 				tab--;
+			}
+			if (subtractTab) {
+				range[0] -= (tab+1);
+				range[1] -= (tab+1);
 			}
 			if (range[1]==alignment[0].length()) range[1] -= (tab+1);
 
