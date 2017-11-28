@@ -93,7 +93,8 @@ public class AlignmentGUI extends JPanel{
 	range[1] = ali[0].length();
     }
     public void setRange(int a, int b) {
-	range[0] = a; range[1] = b;
+	range[0] = Math.max(a,1);
+	range[1] = Math.min(b,alignment[0].length());
     }
 	private static boolean allTab(String[] s, int p){
 		boolean b = true;
@@ -134,6 +135,7 @@ public class AlignmentGUI extends JPanel{
 			while(!allTab(alignment, tab)){
 				tab--;
 			}
+			if (range[1]==alignment[0].length()) range[1] -= (tab+1);
 
 			if(showTitle) {
 				g.setColor(Color.BLACK);
