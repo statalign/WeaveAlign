@@ -146,6 +146,20 @@ public class AlignmentGUI extends JPanel{
 			g.setBackground(Color.white);
 			g.clearRect(0, 0, getWidth(), getHeight());
 		}
+		boolean[] normalised = new boolean[tracks.size()];
+		if(tracks.size() != 0) {
+		    for (int i=0; i<tracks.size(); i++) {
+			double m = 0;
+			for (int j=0; j<tracks.get(i).size(); j++) {
+			    double x = tracks.get(i).get(j);
+			    if (Double.isNaN(x)) continue;
+			    if (x>m) m = x;
+			}
+			normalised[i] = m<=1;
+			if (m>max) max = m;
+		    }
+		    max = Math.ceil(max);
+		}
 //		alignment = owner.allAlignment;
 //		title = owner.title;
 		if(alignment != null && alignment[0] != null) {
@@ -235,7 +249,7 @@ public class AlignmentGUI extends JPanel{
 			Stroke st = g.getStroke();
 			Stroke basic = new BasicStroke(1);
 			Stroke dotted = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[] {2, 2}, 0);
-			if(tracks.size() != 0) {
+			if(tracks.size() != 0) {		
 				g.setStroke(dotted);
 				g.drawLine(OFFSET_X + (tab+1) * COLUMN_WIDTH - 10, startY - OFFSET_Y - colHeight,
 					   OFFSET_X + (tab+1+Math.min(range[1]-range[0]+1,tracks.get(0).size())) * COLUMN_WIDTH, startY - OFFSET_Y - colHeight);
@@ -260,10 +274,10 @@ public class AlignmentGUI extends JPanel{
 					if (tr.get(i-1) == null || Double.isNaN(tr.get(i-1))) { continue; }
 					if (tr.get(i) == null || Double.isNaN(tr.get(i))) { ++i; continue; }
 					g.drawLine( OFFSET_X + (tab + i - range[0] + 1) * COLUMN_WIDTH + COLUMN_WIDTH / 2,
-							(int)(startY - OFFSET_Y - Math.round(tr.get(i-1) * (colHeight) / max)),
+						    (int)(startY - OFFSET_Y - Math.round(tr.get(i-1) * (colHeight) / (normalised[track] ? 1 : max))),
 //							(int)(OFFSET_Y + TITLE_Y - Math.round(decoding[i-1] * (TITLE_Y) / max)),
 							OFFSET_X + (tab + i - range[0] + 2) * COLUMN_WIDTH + COLUMN_WIDTH / 2,
-							(int)(startY - OFFSET_Y - Math.round(tr.get(i) * (colHeight) / max))
+							(int)(startY - OFFSET_Y - Math.round(tr.get(i) * (colHeight) / (normalised[track] ? 1 : max)))
 //							(int)(OFFSET_Y + TITLE_Y - Math.round(decoding[i] * (TITLE_Y) / max))
 							);
 				}

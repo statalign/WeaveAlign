@@ -53,10 +53,10 @@ public class TrackReader {
 				}
 			line = reader.readLine();
 		}
-		if(max > 1)
-			for(int i = 0; i < values.size(); i++)
-				if(values.get(i) != null)
-					values.set(i, values.get(i)/max);
+		// if(max > 1)
+		// 	for(int i = 0; i < values.size(); i++)
+		// 		if(values.get(i) != null)
+		// 			values.set(i, values.get(i)/max);
 		return values;
 	}
 	
